@@ -1,0 +1,5 @@
+config LIB_STSELIB
+    bool "Enable ST STSELib support"
+    default n
+    help
+      Access the STMicroelectronics STSELib.

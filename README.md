@@ -25,4 +25,3 @@ manifest:
     - name: catie-6tron
       url-base: https://github.com/catie-aq
 ``````
-

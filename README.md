@@ -12,7 +12,7 @@ If you're already using the [6TRON Zephyr workspace manifest](https://github.com
     - name: stselib-module
       remote: catie-6tron
       repo-path: zephyr_stselib-module
-      revision: main
+      revision: v1.1.1
       path: 6tron/stselib_module
       submodules: true
 ``````

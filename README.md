@@ -6,7 +6,9 @@ This is a Zephyr Module to automatically import the [ST STSELib](https://github.
 >
 > This repository is licensed Apache-2 to be consistent with the rest of 6TRON libraries, but **STSELib is licensed [BSD-3](https://github.com/STMicroelectronics/STSELib/blob/main/LICENSE.txt)**.
 
-If you're already using the [6TRON Zephyr workspace manifest](https://github.com/catie-aq/6tron_zephyr-workspace), add the following in the `west.yml` and then do a `west update`:
+## Integration
+
+If you're already using the [6TRON Zephyr workspace manifest](https://github.com/catie-aq/6tron_zephyr-workspace), add the following in the `west.yml` (workspace -> 6tron-project) and then do a `west update`:
 
 ``````
     - name: stselib-module
@@ -25,3 +27,14 @@ manifest:
     - name: catie-6tron
       url-base: https://github.com/catie-aq
 ``````
+
+## Usages
+
+Depending on the platform you’re using with the STSafe-A1xx and the use case you wish to implement, you’ll need to provide C source files to handle communication. Common examples are `cmac.c`, `crc16.c`, `crypto.c`, `ecc.c`, `i2c.c` and `services.c`. 
+
+Then simply add `#include "stselib.h"` to any source file where you want to use the STSafe functionalities.
+
+An example implementation is available in this repository: https://github.com/catie-aq/zephyr_stsafe-a110-example
+
+
+

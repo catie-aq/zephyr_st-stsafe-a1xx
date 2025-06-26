@@ -50,6 +50,7 @@ stse_ReturnCode_t stse_platform_ecc_verify(stse_ecc_key_type_t key_type, const P
 Then simply add `#include "stselib.h"` to any source file where you want to use the STSafe functionalities.
 
 An example implementation is available in this repository: https://github.com/catie-aq/zephyr_stsafe-a110-example
+You can take a look at [this commit](https://github.com/catie-aq/zephyr_zest_security_secure-element_tester/commit/524f36a942f5477f8f60efb41ad82148ba56ef96) for the minimal configuration needed. 
 
 
 

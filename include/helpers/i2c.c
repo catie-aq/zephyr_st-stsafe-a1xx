@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2025, CATIE
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "stselib/core/stse_platform.h"
 
 #include <zephyr/drivers/i2c.h>
-
 #include <zephyr/logging/log.h>
 
 static const struct device *bus_i2c = DEVICE_DT_GET(DT_NODELABEL(sixtron_i2c));

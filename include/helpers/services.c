@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025, CATIE
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "stselib.h"
 
 stse_ReturnCode_t stse_services_platform_init(void)

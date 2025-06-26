@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025, CATIE
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef OWN_STSE_PLATFORM_GENERIC_H
 #define OWN_STSE_PLATFORM_GENERIC_H
 

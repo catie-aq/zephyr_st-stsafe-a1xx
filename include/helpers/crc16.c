@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025, CATIE
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "stselib.h"
 
 #define CRC16_INITIAL_VALUE 0xFFFF

@@ -65,8 +65,12 @@ stse_ReturnCode_t stse_platform_i2c_send_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, 
 {
 	stse_ReturnCode_t ret =
 		stse_platform_i2c_send_continue(busID, devAddr, speed, pData, data_size);
+
 	if (ret == STSE_OK) {
 		ret = i2c_write(bus_i2c, i2c_buffer, i2c_frame_size, devAddr);
+	}
+	if (ret != STSE_OK) {
+		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
 
 	return ret;
@@ -75,14 +79,29 @@ stse_ReturnCode_t stse_platform_i2c_send_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, 
 stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_UI16 speed,
 						  PLAT_UI16 frameLength)
 {
-	i2c_frame_size = frameLength;
+	uint8_t stat_len[3];
+	uint8_t ret = 0;
 
-	uint8_t ret = i2c_read(bus_i2c, i2c_buffer, i2c_frame_size, devAddr);
+	ret = i2c_read(bus_i2c, stat_len, sizeof(stat_len), devAddr);
 	if (ret != STSE_OK) {
+		LOG_ERR("I2C read failed during receive start");
 		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
+
+	i2c_frame_size = ((stat_len[1] << 0) + stat_len[2]) + STSE_RSP_FRAME_HEADER_SIZE +
+			 STSE_FRAME_CRC_SIZE;
+	frameLength = i2c_frame_size;
+
+	if (i2c_frame_size > sizeof(i2c_buffer) / sizeof(i2c_buffer[0])) {
+		return STSE_PLATFORM_BUFFER_ERR;
+	}
+
+	ret = i2c_read(bus_i2c, i2c_buffer, frameLength, devAddr);
+	if (ret != STSE_OK) {
+		return STSE_PLATFORM_BUS_ERR;
+	}
 	i2c_frame_offset = 0;
-	return STSE_OK;
+	return (stat_len[0] & 0x3F);
 }
 
 stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 devAddr,
@@ -90,8 +109,8 @@ stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 de
 						     PLAT_UI16 data_size)
 {
 	if (pData != NULL) {
-		if ((i2c_frame_size - i2c_frame_offset) < data_size) {
-			return STSE_PLATFORM_BUFFER_ERR;
+		if (i2c_frame_offset == 1) {
+			i2c_frame_offset += 2;
 		}
 		memcpy(pData, (i2c_buffer + i2c_frame_offset), data_size);
 	}
@@ -102,8 +121,10 @@ stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 de
 stse_ReturnCode_t stse_platform_i2c_receive_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_UI16 speed,
 						 PLAT_UI8 *pData, PLAT_UI16 data_size)
 {
-	stse_ReturnCode_t ret =
-		stse_platform_i2c_receive_continue(busID, devAddr, speed, pData, data_size);
+	if (pData != NULL) {
+		memcpy(pData, (i2c_buffer + i2c_frame_offset), data_size);
+	}
+
 	i2c_frame_offset = 0;
-	return ret;
+	return STSE_OK;
 }

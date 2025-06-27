@@ -13,7 +13,7 @@ stse_ReturnCode_t stse_services_platform_init(void)
 	k_msleep(1);
 	gpio_pin_set_dt(&stsafe_reset, 1);
 
-	k_msleep(10);
+	k_msleep(50);
 
 	return STSE_OK;
 }

@@ -3,3 +3,16 @@ config LIB_STSELIB
     default n
     help
       Access the STMicroelectronics STSELib.
+
+choice
+    prompt "STSAFE Chip"
+    depends on LIB_STSELIB
+    default STSAFE_A120
+
+config STSAFE_A110
+    bool "STSAFE A110"
+
+config STSAFE_A120
+    bool "STSAFE A120"
+
+endchoice

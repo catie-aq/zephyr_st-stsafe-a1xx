@@ -10,9 +10,17 @@
 
 static const struct device *bus_i2c = DEVICE_DT_GET(DT_NODELABEL(sixtron_i2c));
 
+#ifdef CONFIG_STSAFE_A110
 LOG_MODULE_REGISTER(STSAFE_A110_I2C);
-
 static uint8_t i2c_buffer[507U];
+#elif defined(CONFIG_STSAFE_A120)
+LOG_MODULE_REGISTER(STSAFE_A120_I2C);
+static uint8_t i2c_buffer[752U];
+#else
+LOG_MODULE_REGISTER(STSAFE_I2C);
+static uint8_t i2c_buffer[507U];
+#endif
+
 static uint16_t i2c_frame_size;
 static volatile uint16_t i2c_frame_offset;
 

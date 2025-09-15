@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "stselib/core/stse_platform.h"
+#include "core/stse_platform.h"
 
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/logging/log.h>

@@ -1,0 +1,16 @@
+# Copyright (c) 2025 CATIE
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  remotes:
+    - name: STMicroelectronics
+      url-base: https://github.com/STMicroelectronics
+
+  defaults:
+    remote: STMicroelectronics
+
+  projects:
+    - name: stselib
+      repo-path: STSELib
+      revision: df1a2c544c06ffa2c8d51af381e3b098b2aa6e0c
+      path: 6tron/lib/stselib

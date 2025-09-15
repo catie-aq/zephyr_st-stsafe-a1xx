@@ -1,3 +1,0 @@
-[submodule "include/stselib"]
-	path = include/stselib
-	url = https://github.com/STMicroelectronics/STSELib

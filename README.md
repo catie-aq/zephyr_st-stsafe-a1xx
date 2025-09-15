@@ -1,39 +1,22 @@
 # ST - STSELib Module for Zephyr OS
 
-This is a Zephyr Module to automatically import the [ST STSELib](https://github.com/STMicroelectronics/STSELib) library.
+This is a Zephyr module that automatically imports the [ST STSELib](https://github.com/STMicroelectronics/STSELib) library.
 
-> [!IMPORTANT]
+> [!note]
 >
-> This repository is licensed Apache-2 to be consistent with the rest of 6TRON libraries, but **STSELib is licensed [BSD-3](https://github.com/STMicroelectronics/STSELib/blob/main/LICENSE.txt)**.
+> This repository is licensed under [Apache-2.0](LICENSE) to remain consistent with the rest of the 6TRON libraries.  
+> The integrated **STSELib** itself is linked through the [v1.1.1 release](https://github.com/STMicroelectronics/STSELib/releases/tag/v1.1.1), pinned by commit [`df1a2c5`](https://github.com/STMicroelectronics/STSELib/commit/df1a2c544c06ffa2c8d51af381e3b098b2aa6e0c) in the [`west.yml`](west.yml).
 
-## Integration
+## Usage
 
-If you're already using the [6TRON Zephyr workspace manifest](https://github.com/catie-aq/6tron_zephyr-workspace), add the following in the `west.yml` (workspace -> 6tron-project) and then do a `west update`:
+Depending on the platform you are targeting with the STSafe-A1xx, you will need to provide C source files implementing platform-specific cryptographic functions. Common examples include:
 
-``````
-    - name: stselib-module
-      remote: catie-6tron
-      repo-path: zephyr_stselib-module
-      revision: v1.1.1
-      path: 6tron/stselib_module
-      submodules: true
-``````
+- `cmac.c`: host-side AES-CMAC
+- `ecc.c`: host-side ECC verification
 
-If not, you will need to first add the external remote in your zephyr manifest (or your custom workspace manifest) before adding the previous element:
+These files must provide the following functions:
 
-``````
-manifest:
-  remotes:
-    - name: catie-6tron
-      url-base: https://github.com/catie-aq
-``````
-
-## Usages
-
-Depending on the platform you’re using with the STSafe-A1xx and the use case you wish to implement, you’ll need to provide C source files to handle communication. Common examples include the `cmac.c` and `ecc.c` modules, which implement host-channel encryption and signature functionality.
-
-These two files must implement the following functions: 
-```C
+```c
 // cmac.c
 stse_ReturnCode_t stse_platform_aes_cmac_init(const PLAT_UI8 *pKey, PLAT_UI16 key_length,
 					      PLAT_UI16 exp_tag_size);
@@ -47,9 +30,13 @@ stse_ReturnCode_t stse_platform_ecc_verify(stse_ecc_key_type_t key_type, const P
 					   PLAT_UI8 *pSignature);
 ```
 
-Then simply add `#include "stselib.h"` to any source file where you want to use the STSafe functionalities.
+Once implemented, simply add:
 
-An example implementation is available in this repository: [https://github.com/catie-aq/zephyr_stsafe-a110-example](https://github.com/catie-aq/zephyr_zest_security_secure-element_tester)
+```c
+#include "stselib.h"
+```
 
+to any source file that uses STSafe functionalities.
 
-
+An example implementation is available here:  
+[https://github.com/catie-aq/zephyr_zest_security_secure-element_tester](https://github.com/catie-aq/zephyr_zest_security_secure-element_tester)

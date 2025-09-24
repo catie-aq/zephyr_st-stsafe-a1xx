@@ -7,6 +7,23 @@ This is a Zephyr module that automatically imports the [ST STSELib](https://gith
 > This repository is licensed under [Apache-2.0](LICENSE) to remain consistent with the rest of the 6TRON libraries.  
 > The integrated **STSELib** itself is linked through the [v1.1.3 release](https://github.com/STMicroelectronics/STSELib/releases/tag/v1.1.3), pinned by commit [`562f3ef`](https://github.com/STMicroelectronics/STSELib/commit/562f3ef804dc3687b5cb4a0ab0a9e26fe7ecd6a6) in the [`west.yml`](west.yml).
 
+## Options
+The following Kconfig options are available:
+- `CONFIG_LIB_STSELIB`: Enable STSELib support.
+- `CONFIG_STSAFE_A120` or `CONFIG_STSAFE_A110`: Select the specific STSafe chip you are using.
+
+Options can be set in your project's `prj.conf` file or through `menuconfig` (`west build -t menuconfig`).
+```
+menuconfig
+  ├─ modules
+  │  └─ st-stsafe-a1xx
+  │     ST STSafe A1xx  --->
+  │        [*] Enable ST STSELib support
+  │           STSAFE Chip (STSAFE A120)  --->
+  └─ ...
+```
+
+
 ## Usage
 
 Depending on the platform you are targeting with the STSafe-A1xx, you will need to provide C source files implementing platform-specific cryptographic functions. Common examples include:

@@ -14,6 +14,12 @@ config STSE_FRAME_DEBUG
     help
       Enable this option to activate the STSE Frame Debug feature.
 
+config STSE_USE_HOST_SESSION
+    bool "Enable host session for secure channel"
+    default n
+    help
+      Enable this option to use the host session for the secure channel.
+
 choice
     prompt "STSAFE Chip"
     depends on LIB_STSELIB

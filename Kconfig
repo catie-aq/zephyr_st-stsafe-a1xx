@@ -17,6 +17,7 @@ config STSE_FRAME_DEBUG
 config STSE_USE_HOST_SESSION
     bool "Enable host session for secure channel"
     default n
+    select BUILD_WITH_TFM
     help
       Enable this option to use the host session for the secure channel.
 

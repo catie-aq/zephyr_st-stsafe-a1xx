@@ -10,6 +10,12 @@ if (CONFIG_LIB_STSELIB)
     ${WEST_TOPDIR}/modules/lib
   )
 
+  if (CONFIG_STSE_USE_HOST_SESSION)
+    target_include_directories(${ZEPHYR_CURRENT_LIBRARY} PUBLIC
+      ${WEST_TOPDIR}/modules/crypto/mbedtls/include
+    )
+  endif()
+
   file(GLOB_RECURSE stselib_sources ${STSELIB_DIR}/*.c)
 
   zephyr_library_sources(
@@ -19,6 +25,10 @@ if (CONFIG_LIB_STSELIB)
     src/port/crypto.c
     src/port/i2c.c
     src/port/services.c
+  )
+
+  zephyr_library_sources_ifdef(CONFIG_STSE_USE_HOST_SESSION
+    src/port/cmac.c
   )
 
   zephyr_compile_options(

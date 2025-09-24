@@ -6,17 +6,19 @@ if (CONFIG_LIB_STSELIB)
 
   zephyr_include_directories(
     include
-    include/helpers
     ${STSELIB_DIR}
     ${WEST_TOPDIR}/modules/lib
   )
 
   file(GLOB_RECURSE stselib_sources ${STSELIB_DIR}/*.c)
-  file(GLOB_RECURSE helpers_sources include/helpers/*.c)
 
   zephyr_library_sources(
     ${stselib_sources}
-    ${helpers_sources}
+
+    src/port/crc16.c
+    src/port/crypto.c
+    src/port/i2c.c
+    src/port/services.c
   )
 
   zephyr_compile_options(

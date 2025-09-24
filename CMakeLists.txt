@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 if (CONFIG_LIB_STSELIB)
-  set(STSELIB_DIR ${WEST_TOPDIR}/6tron/lib/stselib)
+  set(STSELIB_DIR ${WEST_TOPDIR}/modules/lib/stselib)
 
   zephyr_include_directories(
     include
     include/helpers
     ${STSELIB_DIR}
-    ${WEST_TOPDIR}/6tron/lib
+    ${WEST_TOPDIR}/modules/lib
   )
 
   file(GLOB_RECURSE stselib_sources ${STSELIB_DIR}/*.c)

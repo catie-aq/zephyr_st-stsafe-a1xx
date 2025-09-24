@@ -8,6 +8,12 @@ config LIB_STSELIB
 
 if LIB_STSELIB
 
+config STSE_FRAME_DEBUG
+    bool "Enable STSE Frame Debug"
+    default n
+    help
+      Enable this option to activate the STSE Frame Debug feature.
+
 choice
     prompt "STSAFE Chip"
     depends on LIB_STSELIB

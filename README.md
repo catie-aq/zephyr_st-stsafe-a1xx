@@ -26,34 +26,28 @@ menuconfig
 
 ## Usage
 
-Depending on the platform you are targeting with the STSafe-A1xx, you will need to provide C source files implementing platform-specific cryptographic functions. Common examples include:
+- Update the device tree by adding the `stsafereset-gpios` definition and enabling the `i2c` bus to the `app.overlay` file. Adjust the `DIOx` with the souded resistors on your board.
+  ```dts
+  #include <zephyr/dt-bindings/gpio/sixtron-header.h>
 
-- `cmac.c`: host-side AES-CMAC
-- `ecc.c`: host-side ECC verification
+  / {
+    zephyr,user {
+      stsafereset-gpios = <&sixtron_connector DIO1 GPIO_ACTIVE_HIGH>; // R3
+        //stsafereset-gpios = <&sixtron_connector DIO6 GPIO_ACTIVE_HIGH>; // R4
+        // stsafereset-gpios = <&sixtron_connector DIO11 GPIO_ACTIVE_HIGH>; // R5
+    };
+  };
 
-These files must provide the following functions:
+  &sixtron_i2c {
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_STANDARD>;
+  };
+  ```
 
-```c
-// cmac.c
-stse_ReturnCode_t stse_platform_aes_cmac_init(const PLAT_UI8 *pKey, PLAT_UI16 key_length,
-					      PLAT_UI16 exp_tag_size);
-stse_ReturnCode_t stse_platform_aes_cmac_append(PLAT_UI8 *pInput, PLAT_UI16 length);
-stse_ReturnCode_t stse_platform_aes_cmac_compute_finish(PLAT_UI8 *pTag, PLAT_UI8 *pTagLen);
-stse_ReturnCode_t stse_platform_aes_cmac_verify_finish(PLAT_UI8 *pTag);
+- Include the STSELib header in your application code.
+  ```c
+  #include "stselib.h"
+  ```
 
-// ecc.c
-stse_ReturnCode_t stse_platform_ecc_verify(stse_ecc_key_type_t key_type, const PLAT_UI8 *pPubKey,
-					   PLAT_UI8 *pDigest, PLAT_UI16 digestLen,
-					   PLAT_UI8 *pSignature);
-```
-
-Once implemented, simply add:
-
-```c
-#include "stselib.h"
-```
-
-to any source file that uses STSafe functionalities.
-
-An example implementation is available here:  
-[https://github.com/catie-aq/zephyr_zest_security_secure-element_tester](https://github.com/catie-aq/zephyr_zest_security_secure-element_tester)
+## Sample Application
+Sample applications demonstrating the usage of the STSELib can be found in the `samples/` directory of this repository.

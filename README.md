@@ -49,5 +49,7 @@ menuconfig
   #include "stselib.h"
   ```
 
+![Resistors possibilities](img/resitors.png)
+
 ## Sample Application
 Sample applications demonstrating the usage of the STSELib can be found in the `samples/` directory of this repository.

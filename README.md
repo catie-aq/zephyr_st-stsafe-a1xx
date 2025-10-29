@@ -4,7 +4,7 @@ This is a Zephyr module that automatically imports the [ST STSELib](https://gith
 
 > [!note]
 >
-> This repository is licensed under [Apache-2.0](LICENSE) to remain consistent with the rest of the 6TRON libraries.  
+> This repository is licensed under [Apache-2.0](LICENSE) to remain consistent with the rest of the 6TRON libraries.
 > The integrated **STSELib** itself is linked through the [v1.1.3 release](https://github.com/STMicroelectronics/STSELib/releases/tag/v1.1.3), pinned by commit [`562f3ef`](https://github.com/STMicroelectronics/STSELib/commit/562f3ef804dc3687b5cb4a0ab0a9e26fe7ecd6a6) in the [`west.yml`](west.yml).
 
 ## Options

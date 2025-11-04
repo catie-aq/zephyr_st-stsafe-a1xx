@@ -12,5 +12,5 @@ manifest:
   projects:
     - name: stselib
       repo-path: STSELib
-      revision: 562f3ef804dc3687b5cb4a0ab0a9e26fe7ecd6a6
+      revision: ff70e6da0526e0521148cb923d30a96f7e186cb8
       path: modules/lib/stselib

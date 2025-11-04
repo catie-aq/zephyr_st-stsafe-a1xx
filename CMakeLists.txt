@@ -21,14 +21,14 @@ if (CONFIG_LIB_STSELIB)
   zephyr_library_sources(
     ${stselib_sources}
 
-    src/port/crc16.c
-    src/port/crypto.c
-    src/port/i2c.c
-    src/port/services.c
+    src/crc16.c
+    src/crypto.c
+    src/i2c.c
+    src/services.c
   )
 
   zephyr_library_sources_ifdef(CONFIG_STSE_USE_HOST_SESSION
-    src/port/cmac.c
+    src/cmac.c
   )
 
   zephyr_compile_options(

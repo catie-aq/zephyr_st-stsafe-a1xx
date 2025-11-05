@@ -4,5 +4,5 @@ sample:
 tests:
   sample.default:
     integration_platforms:
-      - zest_core_nrf5340_cpuapp/cpuapp/ns
+      - zest_core_nrf5340/cpuapp/ns
     depends_on: i2c

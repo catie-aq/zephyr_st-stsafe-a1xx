@@ -9,9 +9,10 @@ on:
 
 jobs:
   driver:
-    uses: catie-aq/zephyr_workflows/.github/workflows/driver.yml@main
+    uses: catie-aq/zephyr_workflows/.github/workflows/driver.yml@driver/dynamic-board-support
     with:
       path: "samples"
+      board: "zest_core_nrf5340_cpuapp/cpuapp/ns"
 
     secrets:
       personal_access_token: ${{ secrets.CI_6TRON_ZEPHYR_RO }}

@@ -32,6 +32,27 @@ static stsafea_aes_256_host_keys_t host_key_256 = {
 			    0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f},
 };
 
+static const char *ac_str(uint8_t v)
+{
+	switch (v) {
+	case STSE_AC_ALWAYS:
+		return "ALW";
+	case STSE_AC_HOST:
+		return "HOST";
+	case STSE_AC_AUTH:
+		return "AUTH";
+	case STSE_AC_NEVER:
+		return "NEV";
+	default:
+		return "UNK";
+	}
+}
+
+static const char *zone_str(uint8_t v)
+{
+	return (v == 0) ? "SIMPLE" : "COUNTER";
+}
+
 int main(void)
 {
 	LOG_RAW("************************************************************\n\n");
@@ -258,13 +279,45 @@ int main(void)
 	}
 	LOG_INF("Certificate zone size: %d bytes", size);
 
-	uint8_t out[1000] = {0};
-	ret = stse_get_device_certificate(&stse_handler, 0, size, out);
-	// if (ret != STSE_OK) {
-	// 	LOG_ERR("Failed to get device certificate: %d", ret);
-	// 	return ret;
-	// }
-	LOG_HEXDUMP_INF(out, size, "Device Certificate for cert zone 0");
+	// uint8_t out[1000] = {0};
+	// ret = stse_get_device_certificate(&stse_handler, 0, size, out);
+	// // if (ret != STSE_OK) {
+	// // 	LOG_ERR("Failed to get device certificate: %d", ret);
+	// // 	return ret;
+	// // }
+	// LOG_HEXDUMP_INF(out, size, "Device Certificate for cert zone 0");
+
+	uint8_t tt_partition_count = 0;
+	ret = stsafea_get_total_partition_count(&stse_handler, &tt_partition_count);
+	if (ret != STSE_OK) {
+		LOG_ERR("Failed to get total partition count: %d", ret);
+		return ret;
+	}
+
+	stsafea_data_partition_record_t partition_records[tt_partition_count];
+	uint16_t record_table_length = sizeof(partition_records);
+
+	ret = stsafea_get_data_partitions_configuration(&stse_handler, tt_partition_count,
+							partition_records, record_table_length);
+	if (ret != STSE_OK) {
+		LOG_ERR("Failed to get data partitions configuration: %d", ret);
+		return ret;
+	}
+
+	LOG_INF("%d partitions", tt_partition_count);
+	LOG_RAW("IDX | TYPE    | LEN  | R-AC  | U-AC  | CNT\n");
+	LOG_RAW("--- | ------- | ---- | ----- | ----- | ----\n");
+
+	for (uint8_t i = 0; i < tt_partition_count; i++) {
+		LOG_RAW("%3d | %-7s | %-4d | %-5s | %-5s | %d\n", partition_records[i].index,
+			zone_str(partition_records[i].zone_type),
+			partition_records[i].data_segment_length,
+			ac_str(partition_records[i].read_ac_cr),
+			ac_str(partition_records[i].update_ac_cr),
+			partition_records[i].counter_value);
+	}
+
+	LOG_RAW("─────────────────────────────────────────────\n");
 
 	return ret;
 }

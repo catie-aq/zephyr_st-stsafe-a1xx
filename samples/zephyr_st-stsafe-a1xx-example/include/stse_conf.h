@@ -11,12 +11,7 @@
 
 #define STSE_CONF_STSAFE_A_SUPPORT
 
-// #define STSE_FRAME_DEBUG_LOG
-
-/**
- * Secure channel configuration
- */
-#define STSE_CONF_USE_HOST_SESSION
+// #define STSE_CONF_USE_HOST_SESSION
 
 /**
  * RSP Polling retry setup

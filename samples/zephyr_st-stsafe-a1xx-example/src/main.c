@@ -319,5 +319,44 @@ int main(void)
 
 	LOG_RAW("─────────────────────────────────────────────\n");
 
+	PLAT_UI32 test_zone_index = 1;
+	PLAT_UI16 test_offset = 0;
+	PLAT_UI16 test_length = 32;
+
+	uint8_t write_buffer[32] = {0xAA, 0xBB, 0xCC, 0xDD, 0x11, 0x22, 0x33, 0x44,
+				    0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC,
+				    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+				    0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7};
+	uint8_t read_buffer[32] = {0};
+
+	stsafea_update_option_t update_opt = {0};
+	stsafea_read_option_t read_opt = {0};
+
+	ret = stsafea_update_data_zone(&stse_handler, test_zone_index, update_opt, test_offset,
+				       write_buffer, test_length, STSE_NO_PROT);
+
+	if (ret != STSE_OK) {
+		LOG_ERR("Update failed zone %d: %d", test_zone_index, ret);
+		return ret;
+	} else {
+		LOG_INF("Update success zone %d", test_zone_index);
+	}
+
+	ret = stsafea_read_data_zone(&stse_handler, test_zone_index, read_opt, test_offset,
+				     read_buffer, test_length, STSE_NO_PROT);
+
+	if (ret != STSE_OK) {
+		LOG_ERR("Read failed zone %d: %d", test_zone_index, ret);
+	} else {
+		LOG_INF("Read success zone %d", test_zone_index);
+		LOG_HEXDUMP_INF(read_buffer, test_length, "Read Data");
+
+		if (memcmp(write_buffer, read_buffer, test_length) == 0) {
+			LOG_INF("Data Match");
+		} else {
+			LOG_ERR("Data Mismatch");
+		}
+	}
+
 	return ret;
 }

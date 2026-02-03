@@ -46,9 +46,9 @@ stse_ReturnCode_t stse_platform_aes_cmac_compute_finish(PLAT_UI8 *pTag, PLAT_UI8
 	if (st != PSA_SUCCESS || full_len != sizeof(full_tag)) {
 		return STSE_PLATFORM_AES_CMAC_COMPUTE_ERROR;
 	}
-	memcpy(pTag, full_tag, *pTagLen);
+	memcpy(pTag, full_tag, 4);
+	*pTagLen = 4;
 
-	psa_destroy_key(g_cmaccontext.key_id);
 	return STSE_OK;
 }
 
@@ -62,11 +62,13 @@ stse_ReturnCode_t stse_platform_aes_cmac_verify_finish(PLAT_UI8 *pTag)
 
 	psa_destroy_key(g_cmaccontext.key_id);
 
-	if (st != PSA_SUCCESS || full_len != sizeof(full_tag)) {
-		return STSE_PLATFORM_AES_CMAC_COMPUTE_ERROR;
+	if (st != PSA_SUCCESS || full_len != 16) {
+		return STSE_PLATFORM_AES_CMAC_VERIFY_ERROR;
 	}
-	memcpy(pTag, full_tag, sizeof(full_tag));
 
-	psa_destroy_key(g_cmaccontext.key_id);
+	if (memcmp(pTag, full_tag, 4) != 0) {
+		return STSE_PLATFORM_AES_CMAC_VERIFY_ERROR;
+	}
+
 	return STSE_OK;
 }

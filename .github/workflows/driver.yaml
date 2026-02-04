@@ -12,6 +12,9 @@ jobs:
     uses: catie-aq/zephyr_workflows/.github/workflows/driver.yml@main
     with:
       path: "samples"
+      boards: "zest_core_nrf5340"
+      zephyr_modules: "hal_nordic,trusted-firmware-m,mbedtls,mcuboot"
+      has_manifest: true
 
     secrets:
       personal_access_token: ${{ secrets.CI_6TRON_ZEPHYR_RO }}

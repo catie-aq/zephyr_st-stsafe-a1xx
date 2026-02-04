@@ -2,7 +2,7 @@ sample:
   name: Zephyr STSAFE-A1xx Tester
   description: Sample application for testing STSAFE-A1xx secure element with Zephyr
 tests:
-  sample.default:
+  sample.tester:
     integration_platforms:
-      - zest_core_nrf5340_cpuapp/cpuapp/ns
+      - zest_core_nrf5340/nrf5340/cpuapp/ns
     depends_on: i2c

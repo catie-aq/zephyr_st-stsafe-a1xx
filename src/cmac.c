@@ -5,12 +5,11 @@ typedef struct {
 	psa_key_id_t key_id;
 	psa_mac_operation_t op;
 } stsafea1xx_psa_cmac_ctx_t;
-static stsafea1xx_psa_cmac_ctx_t g_cmaccontext;
+static stsafea1xx_psa_cmac_ctx_t g_cmaccontext = {0};
 
 stse_ReturnCode_t stse_platform_aes_cmac_init(const PLAT_UI8 *pKey, PLAT_UI16 key_length,
 					      PLAT_UI16 exp_tag_size)
 {
-
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_SIGN_MESSAGE);
 	psa_set_key_algorithm(&attr, PSA_ALG_CMAC);
@@ -43,9 +42,10 @@ stse_ReturnCode_t stse_platform_aes_cmac_compute_finish(PLAT_UI8 *pTag, PLAT_UI8
 
 	psa_destroy_key(g_cmaccontext.key_id);
 
-	if (st != PSA_SUCCESS || full_len != sizeof(full_tag)) {
+	if (st != PSA_SUCCESS || full_len != 16) {
 		return STSE_PLATFORM_AES_CMAC_COMPUTE_ERROR;
 	}
+
 	memcpy(pTag, full_tag, 4);
 	*pTagLen = 4;
 

@@ -48,28 +48,3 @@ stse_ReturnCode_t stse_platform_power_init(void)
 {
 	return STSE_OK;
 }
-
-stse_ReturnCode_t stse_platform_aes_cbc_enc(const PLAT_UI8 *pPlaintext, PLAT_UI16 plaintext_length,
-					    PLAT_UI8 *pInitial_value, const PLAT_UI8 *pKey,
-					    PLAT_UI16 key_length, PLAT_UI8 *pEncryptedtext,
-					    PLAT_UI16 *pEncryptedtext_length)
-{
-	return STSE_OK;
-}
-
-stse_ReturnCode_t stse_platform_aes_cbc_dec(const PLAT_UI8 *pEncryptedtext,
-					    PLAT_UI16 encryptedtext_length,
-					    PLAT_UI8 *pInitial_value, const PLAT_UI8 *pKey,
-					    PLAT_UI16 key_length, PLAT_UI8 *pPlaintext,
-					    PLAT_UI16 *pPlaintext_length)
-{
-	return STSE_OK;
-}
-
-stse_ReturnCode_t stse_platform_aes_ecb_enc(const PLAT_UI8 *pPlaintext, PLAT_UI16 plaintext_length,
-					    const PLAT_UI8 *pKey, PLAT_UI16 key_length,
-					    PLAT_UI8 *pEncryptedtext,
-					    PLAT_UI16 *pEncryptedtext_length)
-{
-	return STSE_OK;
-}

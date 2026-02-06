@@ -29,6 +29,7 @@ if (CONFIG_LIB_STSELIB)
 
   zephyr_library_sources_ifdef(CONFIG_STSE_USE_HOST_SESSION
     src/cmac.c
+    src/aes.c
   )
 
   zephyr_compile_options(

@@ -88,7 +88,7 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAd
 		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
 
-	i2c_frame_size = ((stat_len[1] << 0) + stat_len[2]) + STSE_RSP_FRAME_HEADER_SIZE +
+	i2c_frame_size = ((stat_len[1] << 8) + stat_len[2]) + STSE_RSP_FRAME_HEADER_SIZE +
 			 STSE_FRAME_CRC_SIZE;
 	frameLength = i2c_frame_size;
 

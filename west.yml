@@ -1,16 +1,19 @@
-# Copyright (c) 2025 CATIE
+# Copyright (c) 2026 CATIE
 # SPDX-License-Identifier: Apache-2.0
 
 manifest:
   remotes:
     - name: STMicroelectronics
       url-base: https://github.com/STMicroelectronics
+    - name: Dev
+      url-base: https://github.com/Grolleau-Benjamin
 
   defaults:
-    remote: STMicroelectronics
+    # remote: STMicroelectronics
+    remote: Dev
 
   projects:
     - name: stselib
       repo-path: STSELib
-      revision: ff70e6da0526e0521148cb923d30a96f7e186cb8
+      revision: ea045e91da5cebaa488399c468087fd4083ea781
       path: modules/lib/stselib

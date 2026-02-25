@@ -33,7 +33,7 @@ stse_ReturnCode_t stse_platform_store_session_key(PLAT_UI8 *pCypherKey, PLAT_UI3
 	/* ===== Cipher key ===== */
 	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attr, key_length * 8);
-	psa_set_key_algorithm(&attr, PSA_ALG_ECB_NO_PADDING);
+	psa_set_key_algorithm(&attr, PSA_ALG_CBC_NO_PADDING);
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT);
 
 	psa_key_id_t cipher_id = PSA_KEY_ID_NULL;

@@ -18,9 +18,9 @@ stse_ReturnCode_t stse_services_platform_init(void)
 	return STSE_OK;
 }
 
-void stse_platform_Delay_ms(PLAT_UI32 delay_val)
+void stse_platform_Delay_ms(PLAT_UI16 delay_val)
 {
-	k_msleep(delay_val);
+	k_msleep((PLAT_UI32)delay_val);
 }
 
 stse_ReturnCode_t stse_platform_power_on(PLAT_UI8 bus, PLAT_UI8 devAddr)

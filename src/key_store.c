@@ -16,8 +16,8 @@ static void secure_zero(void *ptr, size_t len)
 	}
 }
 
-stse_ReturnCode_t stse_platform_store_session_key(PLAT_UI8 *pCypherKey, PLAT_UI8 *pCypherKeyIdx,
-						  PLAT_UI8 *pMACKey, PLAT_UI8 *pMACKeyIdx,
+stse_ReturnCode_t stse_platform_store_session_key(PLAT_UI8 *pCypherKey, PLAT_UI32 *pCypherKeyIdx,
+						  PLAT_UI8 *pMACKey, PLAT_UI32 *pMACKeyIdx,
 						  PLAT_UI16 key_length)
 {
 	if (!pCypherKey || !pCypherKeyIdx || !pMACKey || !pMACKeyIdx) {
@@ -55,13 +55,13 @@ stse_ReturnCode_t stse_platform_store_session_key(PLAT_UI8 *pCypherKey, PLAT_UI8
 	secure_zero(pCypherKey, key_length);
 	secure_zero(pMACKey, key_length);
 
-	*pCypherKeyIdx = (PLAT_UI8)cipher_id;
-	*pMACKeyIdx = (PLAT_UI8)mac_id;
+	*pCypherKeyIdx = (PLAT_UI32)cipher_id;
+	*pMACKeyIdx = (PLAT_UI32)mac_id;
 
 	return STSE_OK;
 }
 
-stse_ReturnCode_t stse_platform_delete_key(PLAT_UI8 CypherKeyIdx, PLAT_UI8 MACKeyIdx)
+stse_ReturnCode_t stse_platform_delete_key(PLAT_UI32 CypherKeyIdx, PLAT_UI32 MACKeyIdx)
 {
 	if (CypherKeyIdx != STSE_INVALID_KEY_HANDLE) {
 		psa_destroy_key((psa_key_id_t)CypherKeyIdx);

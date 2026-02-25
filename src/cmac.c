@@ -7,7 +7,7 @@ typedef struct {
 } stsafea1xx_psa_cmac_ctx_t;
 static stsafea1xx_psa_cmac_ctx_t g_cmaccontext = {0};
 
-stse_ReturnCode_t stse_platform_aes_cmac_init(const PLAT_UI8 key_idx, PLAT_UI16 exp_tag_size)
+stse_ReturnCode_t stse_platform_aes_cmac_init(const PLAT_UI32 key_idx, PLAT_UI16 exp_tag_size)
 {
 	g_cmaccontext.key_id = (psa_key_id_t)key_idx;
 	g_cmaccontext.op = psa_mac_operation_init();

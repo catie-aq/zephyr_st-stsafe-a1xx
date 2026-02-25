@@ -7,7 +7,7 @@
 #include <psa/crypto.h>
 
 stse_ReturnCode_t stse_platform_aes_ecb_enc(const PLAT_UI8 *pPlaintext, PLAT_UI16 plaintext_length,
-					    const PLAT_UI8 key_idx, PLAT_UI8 *pEncryptedtext,
+					    const PLAT_UI32 key_idx, PLAT_UI8 *pEncryptedtext,
 					    PLAT_UI16 *pEncryptedtext_length)
 {
 	psa_status_t st;
@@ -51,7 +51,7 @@ stse_ReturnCode_t stse_platform_aes_ecb_enc(const PLAT_UI8 *pPlaintext, PLAT_UI1
 }
 
 stse_ReturnCode_t stse_platform_aes_cbc_enc(const PLAT_UI8 *pPlaintext, PLAT_UI16 plaintext_length,
-					    PLAT_UI8 *pInitial_value, const PLAT_UI8 key_idx,
+					    PLAT_UI8 *pInitial_value, const PLAT_UI32 key_idx,
 					    PLAT_UI8 *pEncryptedtext,
 					    PLAT_UI16 *pEncryptedtext_length)
 {
@@ -100,7 +100,7 @@ stse_ReturnCode_t stse_platform_aes_cbc_enc(const PLAT_UI8 *pPlaintext, PLAT_UI1
 
 stse_ReturnCode_t stse_platform_aes_cbc_dec(const PLAT_UI8 *pEncryptedtext,
 					    PLAT_UI16 encryptedtext_length,
-					    PLAT_UI8 *pInitial_value, const PLAT_UI8 key_idx,
+					    PLAT_UI8 *pInitial_value, const PLAT_UI32 key_idx,
 					    PLAT_UI8 *pPlaintext, PLAT_UI16 *pPlaintext_length)
 {
 	psa_status_t st;

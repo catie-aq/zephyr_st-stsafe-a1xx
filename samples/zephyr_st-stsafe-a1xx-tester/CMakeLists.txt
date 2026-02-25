@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CATIE
+# Copyright (c) 2026 CATIE
 # SPDX-License-Identifier: Apache-2.0
 
 cmake_minimum_required(VERSION 3.13.1)

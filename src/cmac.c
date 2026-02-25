@@ -29,7 +29,7 @@ stse_ReturnCode_t stse_platform_aes_cmac_compute_finish(PLAT_UI8 *pTag, PLAT_UI8
 
 	psa_status_t st =
 		psa_mac_sign_finish(&g_cmaccontext.op, full_tag, sizeof(full_tag), &full_len);
-
+	psa_mac_abort(&g_cmaccontext.op);
 	if (st != PSA_SUCCESS || full_len != 16) {
 		return STSE_PLATFORM_AES_CMAC_COMPUTE_ERROR;
 	}

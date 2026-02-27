@@ -7,7 +7,7 @@ If there is no keys already set in your secure element and you want to seed them
 ## Building and Flashing
 To build and flash the application, use the following commands:
 ```bash
-west build -b zest_core_nrf5340/nrf5340/cpuapp/ns app_workspace/zephyr_zest_security_secure-element_example/app/ --pristine
+west build -b zest_core_nrf5340/nrf5340/cpuapp/ns
 
 west flash
 ```

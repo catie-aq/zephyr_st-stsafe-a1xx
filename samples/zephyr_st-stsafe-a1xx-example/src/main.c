@@ -12,7 +12,6 @@
 #define SHOULD_SEED_HKP_CTRL      0
 
 #include "stselib.h"
-const struct gpio_dt_spec stsafe_reset = GPIO_DT_SPEC_GET(ZEPHYR_USER_NODE, stsafereset_gpios);
 
 LOG_MODULE_REGISTER(main);
 
@@ -42,7 +41,7 @@ static const char *ac_str(uint8_t v)
 		return "ALW";
 	case STSE_AC_HOST:
 		return "HOST";
-	case STSE_AC_AUTH:
+	case STSE_AC_AUTH_AND_HOST:
 		return "AUTH";
 	case STSE_AC_NEVER:
 		return "NEV";
@@ -61,16 +60,6 @@ int main(void)
 	LOG_RAW("************************************************************\n\n");
 	LOG_RAW("      Zest Security Secure Element (STSafe-A1xx) Sample     \n\n");
 	LOG_RAW("************************************************************\n\n");
-
-	if (!gpio_is_ready_dt(&stsafe_reset)) {
-		LOG_ERR("STSafe reset GPIO is not ready!");
-		return -1;
-	}
-
-	if (gpio_pin_configure_dt(&stsafe_reset, GPIO_OUTPUT_ACTIVE) < 0) {
-		LOG_ERR("Failed to configure STSafe reset GPIO!");
-		return -1;
-	}
 
 #ifdef CONFIG_STSAFE_A110
 	LOG_INF("STSafe-A110 Secure Element Sample Application");

@@ -14,8 +14,6 @@
 
 LOG_MODULE_REGISTER(main);
 
-const struct gpio_dt_spec stsafe_reset = GPIO_DT_SPEC_GET(ZEPHYR_USER_NODE, stsafereset_gpios);
-
 int main(void)
 {
 	LOG_RAW("************************************************************\n\n");
@@ -23,16 +21,6 @@ int main(void)
 	LOG_RAW("************************************************************\n\n");
 
 	int ret = STSE_OK;
-
-	if (!gpio_is_ready_dt(&stsafe_reset)) {
-		LOG_ERR("STSafe reset GPIO is not ready!");
-		return -1;
-	}
-
-	if (gpio_pin_configure_dt(&stsafe_reset, GPIO_OUTPUT_ACTIVE) < 0) {
-		LOG_ERR("Failed to configure STSafe reset GPIO!");
-		return -1;
-	}
 
 #ifdef CONFIG_STSAFE_A110
 	LOG_RAW("Using STSafe-A110 chip type.\n\n");

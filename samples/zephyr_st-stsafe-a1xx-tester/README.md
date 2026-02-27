@@ -4,9 +4,17 @@ This repository serves two purposes:
 1. Testing your components: it verifies that everything works and displays the configured access commands as well as any pre-configured keys.
 2. Minimal configuration reference: it shows the bare-bones setup required to use the Zest_Security_SecureElement.
 
+## Building and Flashing
+To build and flash the application, use the following commands:
+```bash
+west build -b zest_core_nrf5340/nrf5340/cpuapp
+
+west flash
+```
+
 Sample output:
 
-## Using STSafe-A120 chip type
+### Using STSafe-A120 chip type
 ```
 *** Booting Zephyr OS build v4.1.0 ***
 ************************************************************
@@ -28,7 +36,7 @@ Host Key Slot V2:
         C-MAC Counter: 0x00000000
 ```
 
-## Using STSafe-A110 chip type
+### Using STSafe-A110 chip type
 
 ```
 *** Booting Zephyr OS build v4.1.0 ***

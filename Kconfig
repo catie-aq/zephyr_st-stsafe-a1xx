@@ -1,10 +1,14 @@
-menu "ST STSafe A1xx"
+#
+# Copyright (c) 2026, CATIE
+# SPDX-License-Identifier: Apache-2.0
+#
 
 config LIB_STSELIB
     bool "Enable ST STSELib support"
     default n
     help
       Access the STMicroelectronics STSELib.
+    depends on SHIELD_ZEST_SECURITY_SECUREELEMENT
 
 if LIB_STSELIB
 
@@ -34,6 +38,24 @@ config STSAFE_A120
 
 endchoice # STSAFE Chip
 
-endif # LIB_STSELIB
+config STSE_USE_RSP_POLLING
+    bool "Use polling for RSP pin"
+    default y
 
-endmenu
+config STSE_MAX_POLLING_RETRY
+    int "Maximum number of polling retries"
+    default 10
+    depends on STSE_USE_RSP_POLLING
+
+config STSE_FIRST_POLLING_INTERVAL
+    int "Initial polling interval in milliseconds"
+    default 33
+    depends on STSE_USE_RSP_POLLING
+
+config STSE_POLLING_RETRY_INTERVAL
+    int  "Polling retry interval in milliseconds"
+    default 100
+    depends on STSE_USE_RSP_POLLING
+
+
+endif # LIB_STSELIB

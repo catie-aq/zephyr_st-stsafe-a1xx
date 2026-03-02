@@ -5,15 +5,15 @@ manifest:
   remotes:
     - name: STMicroelectronics
       url-base: https://github.com/STMicroelectronics
-    - name: Dev
+    - name: LocalFork
       url-base: https://github.com/Grolleau-Benjamin
 
   defaults:
     # remote: STMicroelectronics
-    remote: Dev
+    remote: LocalFork
 
   projects:
     - name: stselib
       repo-path: STSELib
-      revision: 5125dbe54ae9a147f560766c8edc61bff99c6369
+      revision: 942bfc606d5955817ce4b3f25142ae417831c9e0
       path: modules/lib/stselib

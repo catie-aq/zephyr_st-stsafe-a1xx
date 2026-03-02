@@ -7,7 +7,7 @@ This repository serves two purposes:
 ## Building and Flashing
 To build and flash the application, use the following commands:
 ```bash
-west build -b zest_core_nrf5340/nrf5340/cpuapp
+west build -b zest_core_nrf5340/nrf5340/cpuapp --shield zest_security_secureelement -- -D DTC_OVERLAY_FILE=sixtron_bus.overlay
 
 west flash
 ```

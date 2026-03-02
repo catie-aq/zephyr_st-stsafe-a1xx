@@ -7,7 +7,7 @@ If there is no keys already set in your secure element and you want to seed them
 ## Building and Flashing
 To build and flash the application, use the following commands:
 ```bash
-west build -b zest_core_nrf5340/nrf5340/cpuapp/ns
+west build -b zest_core_nrf5340/nrf5340/cpuapp/ns --shield zest_security_secureelement -- -D DTC_OVERLAY_FILE=sixtron_bus.overlay
 
 west flash
 ```

@@ -10,7 +10,7 @@
 
 LOG_MODULE_REGISTER(stse_key_store, LOG_LEVEL_INF);
 
-#include "aes.h"
+#include "stse_aes.h"
 
 static void secure_zero(void *ptr, size_t len)
 {

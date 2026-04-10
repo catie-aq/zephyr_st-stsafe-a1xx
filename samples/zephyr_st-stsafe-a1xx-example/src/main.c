@@ -122,13 +122,32 @@ int main(void)
 	if (host_key_slot.key_presence_flag == 1) {
 		/**
 		 * Host key slot already contains a key.
-		 * Open the host session.
+		 * Store keys in platform secure storage then open the host session.
 		 */
 		LOG_INF("Host key slot already contains a key");
+
+		PLAT_UI32 mac_key_idx = 0;
+		PLAT_UI32 cipher_key_idx = 0;
+
+		ret = stse_platform_store_aes_key(host_key_128.host_mac_key,
+						  sizeof(host_key_128.host_mac_key),
+						  STSE_AES_KEY_USAGE_MAC, &mac_key_idx);
+		if (ret != STSE_OK) {
+			LOG_ERR("Failed to store MAC key in platform secure storage: %d", ret);
+			return ret;
+		}
+
+		ret = stse_platform_store_aes_key(host_key_128.host_cipher_key,
+						  sizeof(host_key_128.host_cipher_key),
+						  STSE_AES_KEY_USAGE_CIPHER, &cipher_key_idx);
+		if (ret != STSE_OK) {
+			LOG_ERR("Failed to store cipher key in platform secure storage: %d", ret);
+			return ret;
+		}
+
 		stse_session.context.host.key_type = STSE_AES_128_KT;
-		ret = stsafea_open_host_session(&stse_handler, &stse_session,
-						host_key_128.host_mac_key,
-						host_key_128.host_cipher_key);
+		ret = stsafea_open_host_session_from_idx(&stse_handler, &stse_session, mac_key_idx,
+							 cipher_key_idx);
 		if (ret != STSE_OK) {
 			LOG_ERR("Failed to open host session: %d", ret);
 			return ret;
@@ -224,13 +243,32 @@ int main(void)
 	if (host_key_slot.key_presence_flag == 1) {
 		/**
 		 * Host key slot already contains a key.
-		 * Open the host session.
+		 * Store keys in platform secure storage then open the host session.
 		 */
 		LOG_INF("Host key slot already contains a key");
+
+		PLAT_UI32 mac_key_idx = 0;
+		PLAT_UI32 cipher_key_idx = 0;
+
+		ret = stse_platform_store_aes_key(host_key_256.host_mac_key,
+						  sizeof(host_key_256.host_mac_key),
+						  STSE_AES_KEY_USAGE_MAC, &mac_key_idx);
+		if (ret != STSE_OK) {
+			LOG_ERR("Failed to store MAC key in platform secure storage: %d", ret);
+			return ret;
+		}
+
+		ret = stse_platform_store_aes_key(host_key_256.host_cipher_key,
+						  sizeof(host_key_256.host_cipher_key),
+						  STSE_AES_KEY_USAGE_CIPHER, &cipher_key_idx);
+		if (ret != STSE_OK) {
+			LOG_ERR("Failed to store cipher key in platform secure storage: %d", ret);
+			return ret;
+		}
+
 		stse_session.context.host.key_type = STSE_AES_256_KT;
-		ret = stsafea_open_host_session(&stse_handler, &stse_session,
-						host_key_256.host_mac_key,
-						host_key_256.host_cipher_key);
+		ret = stsafea_open_host_session_from_idx(&stse_handler, &stse_session, mac_key_idx,
+							 cipher_key_idx);
 		if (ret != STSE_OK) {
 			LOG_ERR("Failed to open host session: %d", ret);
 			return ret;

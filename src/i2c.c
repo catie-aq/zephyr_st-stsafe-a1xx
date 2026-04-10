@@ -29,8 +29,9 @@ stse_ReturnCode_t stse_platform_i2c_wake(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_
 	return STSE_OK;
 }
 
-stse_ReturnCode_t stse_platform_i2c_init(PLAT_UI8 busID)
+stse_ReturnCode_t stse_platform_i2c_init(PLAT_UI8 busID, void *pArg)
 {
+	(void)pArg; // Unused parameter
 	return stse_platform_i2c_wake(busID, 0x20, 100);
 }
 
@@ -84,7 +85,6 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAd
 
 	ret = i2c_read(bus_i2c, stat_len, sizeof(stat_len), devAddr);
 	if (ret != STSE_OK) {
-		LOG_ERR("I2C read failed during receive start");
 		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
 

@@ -9,8 +9,9 @@
 #include <psa/crypto.h>
 #endif
 
-stse_ReturnCode_t stse_platform_crypto_init(void)
+stse_ReturnCode_t stse_platform_crypto_init(void *pArg)
 {
+	(void)pArg; // Unused parameter
 #ifdef CONFIG_STSE_USE_HOST_SESSION
 	static bool inited = false;
 	if (!inited) {

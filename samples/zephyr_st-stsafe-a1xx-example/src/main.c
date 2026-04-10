@@ -71,7 +71,7 @@ int main(void)
 #endif
 
 	int ret = STSE_OK;
-	stse_Handler_t stse_handler;
+	stse_Handle_t stse_handler;
 	stse_session_t stse_session;
 
 	ret = stse_set_default_handler_value(&stse_handler);
@@ -86,7 +86,7 @@ int main(void)
 	stse_handler.device_type = STSAFE_A120;
 #endif
 
-	ret = stse_init(&stse_handler);
+	ret = stse_init(&stse_handler, NULL);
 	if (ret != STSE_OK) {
 		LOG_ERR("Failed to initialize STSafe handler: %d", ret);
 		return ret;

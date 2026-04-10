@@ -7,13 +7,13 @@
 
 stse_ReturnCode_t stse_services_platform_init(void)
 {
-	stse_platform_crc16_init();
-	gpio_pin_set_dt(&stsafe_reset, 0);
+	stse_platform_crc16_init(NULL);
+	gpio_pin_set_dt(&stsafereset, 0);
 
 	k_msleep(1);
-	gpio_pin_set_dt(&stsafe_reset, 1);
+	gpio_pin_set_dt(&stsafereset, 1);
 
-	k_msleep(50);
+	k_msleep(10);
 
 	return STSE_OK;
 }
@@ -25,26 +25,30 @@ void stse_platform_Delay_ms(PLAT_UI16 delay_val)
 
 stse_ReturnCode_t stse_platform_power_on(PLAT_UI8 bus, PLAT_UI8 devAddr)
 {
-	gpio_pin_set_dt(&stsafe_reset, 1);
+	gpio_pin_set_dt(&stsafereset, 1);
 	return (STSE_OK);
 }
 
 stse_ReturnCode_t stse_platform_power_off(PLAT_UI8 bus, PLAT_UI8 devAddr)
 {
-	gpio_pin_set_dt(&stsafe_reset, 0);
+	gpio_pin_set_dt(&stsafereset, 0);
 	return (STSE_OK);
 }
 
-stse_ReturnCode_t stse_platform_generate_random_init(void)
+stse_ReturnCode_t stse_platform_generate_random_init(void *pArg)
 {
+	(void)pArg; // Unused parameter
 	return STSE_OK;
 }
 
-stse_ReturnCode_t stse_platform_delay_init(void)
+stse_ReturnCode_t stse_platform_delay_init(void *pArg)
 {
+	(void)pArg; // Unused parameter
 	return STSE_OK;
 }
-stse_ReturnCode_t stse_platform_power_init(void)
+
+stse_ReturnCode_t stse_platform_power_init(void *pArg)
 {
+	(void)pArg; // Unused parameter
 	return STSE_OK;
 }

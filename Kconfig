@@ -25,6 +25,35 @@ config STSE_USE_HOST_SESSION
     help
       Enable this option to use the host session for the secure channel.
 
+config STSE_ECC
+    bool "Enable ECC support"
+    default n
+    help
+      Enable this option to activate ECC support in the STSELib.
+
+if STSE_ECC
+
+config STSE_ECC_NIST_P_256
+    bool "Enable NIST P-256 curve support"
+    default y
+    depends on STSE_ECC
+    help
+      Enable this option to support the NIST P-256 curve for ECC operations.
+config STSE_ECC_NIST_P_384
+    bool "Enable NIST P-384 curve support"
+    default n
+    depends on STSE_ECC
+    help
+      Enable this option to support the NIST P-384 curve for ECC operations.
+config STSE_ECC_NIST_P_521
+    bool "Enable NIST P-521 curve support"
+    default n
+    depends on STSE_ECC
+    help
+      Enable this option to support the NIST P-521 curve for ECC operations.
+
+endif # STSE_ECC
+
 choice
     prompt "STSAFE Chip"
     depends on LIB_STSELIB

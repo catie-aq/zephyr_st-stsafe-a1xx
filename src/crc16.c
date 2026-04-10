@@ -34,8 +34,9 @@ static PLAT_UI16 crc16_tab[] = {
 
 PLAT_UI16 crc16_val = CRC16_INITIAL_VALUE;
 
-stse_ReturnCode_t stse_platform_crc16_init(void)
+stse_ReturnCode_t stse_platform_crc16_init(void *pArg)
 {
+	(void)pArg; // Unused parameter
 	return STSE_OK;
 }
 

@@ -1,0 +1,7 @@
+{
+    "cmake.configureArgs": [
+        "-DCONFIG_STSE_USE_HOST_SESSION=y",
+        "-DCONFIG_STSE_ECC=y",
+        "-DCONFIG_STSE_ECC_NIST_P_256=y"
+    ]
+}

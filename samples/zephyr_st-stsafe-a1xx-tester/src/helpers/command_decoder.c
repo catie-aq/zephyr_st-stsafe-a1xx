@@ -9,7 +9,7 @@
 
 LOG_MODULE_REGISTER(command_decoder);
 
-void print_perso_info(stse_Handler_t *stse_handler)
+void print_perso_info(stse_Handle_t *stse_handler)
 {
 	uint8_t cmd_count = 0;
 	int ret = stsafea_get_command_count(stse_handler, &cmd_count);

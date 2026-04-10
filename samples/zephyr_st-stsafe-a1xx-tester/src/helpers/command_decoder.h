@@ -10,6 +10,6 @@
 
 #include "stselib.h"
 
-void print_perso_info(stse_Handler_t *stse_handler);
+void print_perso_info(stse_Handle_t *stse_handler);
 
 #endif /* COMMAND_DECODER_H */

@@ -5,12 +5,26 @@ This is a Zephyr module that automatically imports the [ST STSELib](https://gith
 > [!note]
 >
 > This repository is licensed under [Apache-2.0](LICENSE) to remain consistent with the rest of the 6TRON libraries.
-> The integrated **STSELib** itself is linked through the [v1.1.3 release](https://github.com/STMicroelectronics/STSELib/releases/tag/v1.1.3), pinned by commit [`562f3ef`](https://github.com/STMicroelectronics/STSELib/commit/562f3ef804dc3687b5cb4a0ab0a9e26fe7ecd6a6) in the [`west.yml`](west.yml).
+> The integrated **STSELib** itself is linked through the [v1.2.0 release](https://github.com/STMicroelectronics/STSELib/releases/tag/v1.2.0), pinned by commit [`dc93a1c`](https://github.com/STMicroelectronics/STSELib/commit/dc93a1c41ed630c8f2178f29630c1c27d004c228) in the [`west.yml`](west.yml).
 
 ## Options
 The following Kconfig options are available:
-- `CONFIG_LIB_STSELIB`: Enable STSELib support.
-- `CONFIG_STSAFE_A120` or `CONFIG_STSAFE_A110`: Select the specific STSafe chip you are using.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `CONFIG_LIB_STSELIB` | bool | n | Enable STSELib support. Requires `SHIELD_ZEST_SECURITY_SECUREELEMENT`. |
+| `CONFIG_STSAFE_A120` | bool | y | Select the STSAFE A120 chip. |
+| `CONFIG_STSAFE_A110` | bool | n | Select the STSAFE A110 chip. |
+| `CONFIG_STSE_FRAME_DEBUG` | bool | n | Enable STSE frame debug output. |
+| `CONFIG_STSE_USE_HOST_SESSION` | bool | n | Enable host session for secure channel. Selects `BUILD_WITH_TFM`. |
+| `CONFIG_STSE_ECC` | bool | n | Enable ECC support. |
+| `CONFIG_STSE_ECC_NIST_P_256` | bool | y | Enable NIST P-256 curve support (requires `STSE_ECC`). |
+| `CONFIG_STSE_ECC_NIST_P_384` | bool | n | Enable NIST P-384 curve support (requires `STSE_ECC`). |
+| `CONFIG_STSE_ECC_NIST_P_521` | bool | n | Enable NIST P-521 curve support (requires `STSE_ECC`). |
+| `CONFIG_STSE_USE_RSP_POLLING` | bool | y | Use polling for the RSP pin instead of interrupt. |
+| `CONFIG_STSE_MAX_POLLING_RETRY` | int | 10 | Maximum number of polling retries (requires `STSE_USE_RSP_POLLING`). |
+| `CONFIG_STSE_FIRST_POLLING_INTERVAL` | int | 33 | Initial polling interval in milliseconds (requires `STSE_USE_RSP_POLLING`). |
+| `CONFIG_STSE_POLLING_RETRY_INTERVAL` | int | 100 | Polling retry interval in milliseconds (requires `STSE_USE_RSP_POLLING`). |
 
 Options can be set in your project's `prj.conf` file or through `menuconfig` (`west build -t menuconfig`).
 ```
@@ -19,7 +33,17 @@ menuconfig
   │  └─ st-stsafe-a1xx
   │     ST STSafe A1xx  --->
   │        [*] Enable ST STSELib support
+  │           [ ] Enable STSE Frame Debug
+  │           [ ] Enable host session for secure channel
+  │           [ ] Enable ECC support
+  │              [*] Enable NIST P-256 curve support
+  │              [ ] Enable NIST P-384 curve support
+  │              [ ] Enable NIST P-521 curve support
   │           STSAFE Chip (STSAFE A120)  --->
+  │           [*] Use polling for RSP pin
+  │              (10)  Maximum number of polling retries
+  │              (33)  Initial polling interval in milliseconds
+  │              (100) Polling retry interval in milliseconds
   └─ ...
 ```
 
@@ -30,13 +54,7 @@ menuconfig
   ```dts
   #include <zephyr/dt-bindings/gpio/sixtron-header.h>
 
-  / {
-    zephyr,user {
-      stsafereset-gpios = <&sixtron_connector DIO1 GPIO_ACTIVE_HIGH>; // R3
-        //stsafereset-gpios = <&sixtron_connector DIO6 GPIO_ACTIVE_HIGH>; // R4
-        // stsafereset-gpios = <&sixtron_connector DIO11 GPIO_ACTIVE_HIGH>; // R5
-    };
-  };
+  ZEST_SECURITY_SECUREELEMENT(1)
 
   &sixtron_i2c {
     status = "okay";

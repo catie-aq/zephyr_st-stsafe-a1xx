@@ -9,11 +9,11 @@ manifest:
       url-base: https://github.com/Grolleau-Benjamin
 
   defaults:
-    # remote: STMicroelectronics
-    remote: LocalFork
+    remote: STMicroelectronics
+    # remote: LocalFork
 
   projects:
     - name: stselib
       repo-path: STSELib
-      revision: dc93a1c41ed630c8f2178f29630c1c27d004c228
+      revision: 568b4bd94d225c0b9b3a490d08fa0181290e774f
       path: modules/lib/stselib

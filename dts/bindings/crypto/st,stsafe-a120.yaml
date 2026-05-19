@@ -1,0 +1,8 @@
+description: STMicroelectronics STSAFE-A120 secure element
+compatible: "st,stsafe-a120"
+include: i2c-device.yaml
+properties:
+  reset-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO connected to the STSAFE RESET pin.

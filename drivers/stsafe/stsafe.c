@@ -14,13 +14,26 @@ LOG_MODULE_REGISTER(stsafe, CONFIG_STSAFE_LOG_LEVEL);
 struct stsafe_config {
 	struct i2c_dt_spec i2c;
 	struct gpio_dt_spec reset_gpio;
+	int bus_id;
 };
 
 struct stsafe_data {
 	stse_Handle_t handle;
 	struct k_mutex lock;
 	bool ready;
+	int bus_id;
 };
+
+static int stsafe_reset(const struct device *dev)
+{
+	const struct stsafe_config *cfg = dev->config;
+
+	gpio_pin_set_dt(&cfg->reset_gpio, 0);
+	k_msleep(1);
+	gpio_pin_set_dt(&cfg->reset_gpio, 1);
+	k_msleep(10);
+	return 0;
+}
 
 stse_Handle_t *stsafe_acquire(const struct device *dev, k_timeout_t timeout)
 {
@@ -57,12 +70,15 @@ static int stsafe_init(const struct device *dev)
 	gpio_pin_configure_dt(&cfg->reset_gpio, GPIO_OUTPUT_INACTIVE);
 	k_mutex_init(&data->lock);
 
+	stsafe_reset(dev);
+
 	stse_ReturnCode_t rc = stse_set_default_handler_value(&data->handle);
 	if (rc != STSE_OK) {
 		LOG_ERR("stse_set_default_handler_value failed: 0x%x", rc);
 		return -EIO;
 	}
 
+	data->handle.io.busID = data->bus_id;
 	rc = stse_init(&data->handle, (void *)dev);
 	if (rc != STSE_OK) {
 		LOG_ERR("stse_init failed: 0x%x", rc);
@@ -79,6 +95,7 @@ static int stsafe_init(const struct device *dev)
 	static const struct stsafe_config stsafe_cfg_##inst = {                                    \
 		.i2c = I2C_DT_SPEC_INST_GET(inst),                                                 \
 		.reset_gpio = GPIO_DT_SPEC_INST_GET(inst, reset_gpios),                            \
+		.bus_id = inst,                                                                    \
 	};                                                                                         \
 	DEVICE_DT_INST_DEFINE(inst, stsafe_init, NULL, &stsafe_data_##inst, &stsafe_cfg_##inst,    \
 			      POST_KERNEL, CONFIG_STSAFE_INIT_PRIORITY, NULL);

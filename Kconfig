@@ -88,3 +88,5 @@ config STSE_POLLING_RETRY_INTERVAL
 
 
 endif # LIB_STSELIB
+
+rsource "drivers/stsafe/Kconfig"

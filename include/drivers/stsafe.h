@@ -2,5 +2,9 @@
 #define ZEPHYR_INCLUDE_DRIVERS_STSAFE_H_
 
 #include <zephyr/device.h>
+#include "stselib.h"
+
+stse_Handle_t *stsafe_acquire(const struct device *dev, k_timeout_t timeout);
+void stsafe_release(const struct device *dev);
 
 #endif /* ZEPHYR_INCLUDE_DRIVERS_STSAFE_H_ */

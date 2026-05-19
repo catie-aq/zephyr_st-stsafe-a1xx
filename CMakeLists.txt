@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 if (CONFIG_LIB_STSELIB)
+  add_subdirectory(drivers/stsafe)
+
   set(STSELIB_DIR ${WEST_TOPDIR}/modules/lib/stselib)
 
   zephyr_include_directories(

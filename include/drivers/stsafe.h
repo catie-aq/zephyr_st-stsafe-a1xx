@@ -1,0 +1,6 @@
+#ifndef ZEPHYR_INCLUDE_DRIVERS_STSAFE_H_
+#define ZEPHYR_INCLUDE_DRIVERS_STSAFE_H_
+
+#include <zephyr/device.h>
+
+#endif /* ZEPHYR_INCLUDE_DRIVERS_STSAFE_H_ */

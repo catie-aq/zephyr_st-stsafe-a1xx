@@ -1,0 +1,20 @@
+config STSAFE_DRIVER
+    bool "STSAFE-A1xx Zephyr driver"
+    default y
+    depends on DT_HAS_ST_STSAFE_A110_ENABLED || DT_HAS_ST_STSAFE_A120_ENABLED
+    select I2C
+    select GPIO
+    help
+      Native Zephyr driver for the STSAFE-A1xx secure element.
+
+if STSAFE_DRIVER
+
+config STSAFE_INIT_PRIORITY
+    int "STSAFE init priority"
+    default 80
+
+module = STSAFE
+module-str = stsafe
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

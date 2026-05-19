@@ -14,6 +14,10 @@ config STSAFE_INIT_PRIORITY
     int "STSAFE init priority"
     default 80
 
+config STSAFE_MAX_INSTANCES
+    int "Maximum number of STSAFE instances"
+    default 1
+
 module = STSAFE
 module-str = stsafe
 source "subsys/logging/Kconfig.template.log_config"

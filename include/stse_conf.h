@@ -40,7 +40,4 @@
 #define STSE_FIRST_POLLING_INTERVAL 33
 #define STSE_POLLING_RETRY_INTERVAL 100
 
-#define ZEPHYR_USER_NODE DT_PATH(zephyr_user)
-extern const struct gpio_dt_spec stsafereset;
-
 #endif /* STSE_CONF_H */

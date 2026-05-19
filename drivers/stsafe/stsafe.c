@@ -6,6 +6,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "stselib.h"
+#include "drivers/stsafe.h"
+
 LOG_MODULE_REGISTER(stsafe, CONFIG_STSAFE_LOG_LEVEL);
 
 struct stsafe_config {
@@ -14,8 +17,28 @@ struct stsafe_config {
 };
 
 struct stsafe_data {
+	stse_Handle_t handle;
 	struct k_mutex lock;
+	bool ready;
 };
+
+stse_Handle_t *stsafe_acquire(const struct device *dev, k_timeout_t timeout)
+{
+	struct stsafe_data *data = dev->data;
+	if (!data->ready) {
+		return NULL;
+	}
+	if (k_mutex_lock(&data->lock, timeout) != 0) {
+		return NULL;
+	}
+	return &data->handle;
+}
+
+void stsafe_release(const struct device *dev)
+{
+	struct stsafe_data *data = dev->data;
+	k_mutex_unlock(&data->lock);
+}
 
 static int stsafe_init(const struct device *dev)
 {
@@ -34,7 +57,20 @@ static int stsafe_init(const struct device *dev)
 	gpio_pin_configure_dt(&cfg->reset_gpio, GPIO_OUTPUT_INACTIVE);
 	k_mutex_init(&data->lock);
 
-	LOG_INF("STSAFE skeleton ready at addr 0x%02x on %s", cfg->i2c.addr, cfg->i2c.bus->name);
+	stse_ReturnCode_t rc = stse_set_default_handler_value(&data->handle);
+	if (rc != STSE_OK) {
+		LOG_ERR("stse_set_default_handler_value failed: 0x%x", rc);
+		return -EIO;
+	}
+
+	rc = stse_init(&data->handle, (void *)dev);
+	if (rc != STSE_OK) {
+		LOG_ERR("stse_init failed: 0x%x", rc);
+		return -EIO;
+	}
+
+	data->ready = true;
+	LOG_INF("STSAFE @0x%02x initialized", cfg->i2c.addr);
 	return 0;
 }
 

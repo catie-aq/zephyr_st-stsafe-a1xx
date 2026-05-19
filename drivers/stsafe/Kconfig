@@ -4,6 +4,7 @@ config STSAFE_DRIVER
     depends on DT_HAS_ST_STSAFE_A110_ENABLED || DT_HAS_ST_STSAFE_A120_ENABLED
     select I2C
     select GPIO
+    select LIB_STSELIB
     help
       Native Zephyr driver for the STSAFE-A1xx secure element.
 

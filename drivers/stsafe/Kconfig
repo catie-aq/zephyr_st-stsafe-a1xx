@@ -41,21 +41,6 @@ config LIB_STSELIB
 
 if LIB_STSELIB
 
-choice
-	prompt "STSAFE chip variant"
-	default STSAFE_A120
-	help
-	  Selects which chip variant the STSELib is built for. The shield's
-	  Kconfig.defconfig usually sets this automatically.
-
-config STSAFE_A110
-	bool "STSAFE-A110"
-
-config STSAFE_A120
-	bool "STSAFE-A120"
-
-endchoice
-
 config STSE_FRAME_DEBUG
 	bool "STSE frame debug output"
 	default n

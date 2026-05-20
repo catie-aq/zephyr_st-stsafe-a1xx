@@ -1,0 +1,9 @@
+# Copyright (c) 2026, CATIE
+# SPDX-License-Identifier: Apache-2.0
+
+include: i2c-device.yaml
+properties:
+  reset-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO connected to the STSAFE RESET pin (active-low).

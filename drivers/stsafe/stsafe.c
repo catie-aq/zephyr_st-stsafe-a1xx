@@ -28,10 +28,12 @@ static int stsafe_reset(const struct device *dev)
 {
 	const struct stsafe_config *cfg = dev->config;
 
-	gpio_pin_set_dt(&cfg->reset_gpio, 0);
-	k_msleep(1);
 	gpio_pin_set_dt(&cfg->reset_gpio, 1);
+	k_msleep(1);
+	gpio_pin_set_dt(&cfg->reset_gpio, 0);
 	k_msleep(10);
+
+	LOG_DBG("STSAFE reset complete");
 	return 0;
 }
 

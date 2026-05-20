@@ -21,6 +21,13 @@ struct stsafe_data {
 	stse_Handle_t handle;
 	struct k_mutex lock;
 	bool ready;
+
+	enum stsafe_mode {
+		STSAFE_MODE_UNSET = 0,
+		STSAFE_MODE_SIMPLE,
+		STSAFE_MODE_LOCKED,
+	} mode;
+	struct k_spinlock mode_lock;
 };
 
 static int stsafe_reset(const struct device *dev)
@@ -41,12 +48,49 @@ static int stsafe_reset(const struct device *dev)
 	return 0;
 }
 
+static bool stsafe_claim_mode(struct stsafe_data *data, enum stsafe_mode target)
+{
+	bool ok = false;
+
+	K_SPINLOCK(&data->mode_lock) {
+		if (data->mode == STSAFE_MODE_UNSET || data->mode == target) {
+			data->mode = target;
+			ok = true;
+		}
+	}
+	return ok;
+}
+
+stse_Handle_t *stsafe_get_handle(const struct device *dev)
+{
+	struct stsafe_data *data = dev->data;
+
+	if (!data->ready) {
+		return NULL;
+	}
+	if (!stsafe_claim_mode(data, STSAFE_MODE_SIMPLE)) {
+		LOG_ERR("%s: stsafe_get_handle() called on a device already used "
+			"with stsafe_acquire()/release(). Stick to one mode.",
+			dev->name);
+		return NULL;
+	}
+	return &data->handle;
+}
+
 stse_Handle_t *stsafe_acquire(const struct device *dev, k_timeout_t timeout)
 {
 	struct stsafe_data *data = dev->data;
 	if (!data->ready) {
 		return NULL;
 	}
+
+	if (!stsafe_claim_mode(data, STSAFE_MODE_LOCKED)) {
+		LOG_ERR("%s: stsafe_acquire() called on a device already used "
+			"with stsafe_get_handle(). Stick to one mode.",
+			dev->name);
+		return NULL;
+	}
+
 	if (k_mutex_lock(&data->lock, timeout) != 0) {
 		return NULL;
 	}

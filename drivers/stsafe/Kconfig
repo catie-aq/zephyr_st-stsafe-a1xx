@@ -1,25 +1,115 @@
+# Copyright (c) 2026, CATIE
+# SPDX-License-Identifier: Apache-2.0
+
 config STSAFE_DRIVER
-    bool "STSAFE-A1xx Zephyr driver"
-    default y
-    depends on DT_HAS_ST_STSAFE_A110_ENABLED || DT_HAS_ST_STSAFE_A120_ENABLED
-    select I2C
-    select GPIO
-    select LIB_STSELIB
-    help
-      Native Zephyr driver for the STSAFE-A1xx secure element.
+	bool "STSAFE-A1xx native Zephyr driver"
+	default y
+	depends on DT_HAS_ST_STSAFE_A110_ENABLED || DT_HAS_ST_STSAFE_A120_ENABLED
+	select I2C
+	select GPIO
+	select LIB_STSELIB
+	help
+	  Native Zephyr driver for the STMicroelectronics STSAFE-A1xx
+	  secure element family. Exposes stsafe_acquire() / stsafe_release()
+	  which return a stse_Handle_t* usable with the STSELib API
+	  (stsafea_*() calls).
 
 if STSAFE_DRIVER
 
 config STSAFE_INIT_PRIORITY
-    int "STSAFE init priority"
-    default 80
+	int "STSAFE init priority"
+	default 80
+	help
+	  Init priority of the STSAFE driver. Must be higher than the I2C
+	  controller priority (the driver needs the bus already up at init).
 
 config STSAFE_MAX_INSTANCES
-    int "Maximum number of STSAFE instances"
-    default 1
+	int "Maximum number of STSAFE instances"
+	default 1
+	help
+	  Sizes the internal context table used by the platform layer to
+	  route STSELib callbacks to the right device instance.
 
 module = STSAFE
 module-str = stsafe
 source "subsys/logging/Kconfig.template.log_config"
 
-endif
+endif # STSAFE_DRIVER
+
+config LIB_STSELIB
+	bool
+
+if LIB_STSELIB
+
+choice
+	prompt "STSAFE chip variant"
+	default STSAFE_A120
+	help
+	  Selects which chip variant the STSELib is built for. The shield's
+	  Kconfig.defconfig usually sets this automatically.
+
+config STSAFE_A110
+	bool "STSAFE-A110"
+
+config STSAFE_A120
+	bool "STSAFE-A120"
+
+endchoice
+
+config STSE_FRAME_DEBUG
+	bool "STSE frame debug output"
+	default n
+	help
+	  Dump APDU frames to the log for low-level debugging.
+
+config STSE_USE_HOST_SESSION
+	bool "Host session for secure channel"
+	default n
+	select BUILD_WITH_TFM
+	help
+	  Enable the host-side session for the secure channel. Pulls in
+	  mbedTLS via TF-M.
+
+config STSE_ECC
+	bool "ECC support"
+	default n
+	help
+	  Enable elliptic-curve cryptography in the STSELib.
+
+if STSE_ECC
+
+config STSE_ECC_NIST_P_256
+	bool "NIST P-256 curve"
+	default y
+
+config STSE_ECC_NIST_P_384
+	bool "NIST P-384 curve"
+	default n
+
+config STSE_ECC_NIST_P_521
+	bool "NIST P-521 curve"
+	default n
+
+endif # STSE_ECC
+
+config STSE_USE_RSP_POLLING
+	bool "Poll the RSP pin instead of using an interrupt"
+	default y
+
+if STSE_USE_RSP_POLLING
+
+config STSE_MAX_POLLING_RETRY
+	int "Maximum polling retries"
+	default 10
+
+config STSE_FIRST_POLLING_INTERVAL
+	int "Initial polling interval (ms)"
+	default 33
+
+config STSE_POLLING_RETRY_INTERVAL
+	int "Polling retry interval (ms)"
+	default 100
+
+endif # STSE_USE_RSP_POLLING
+
+endif # LIB_STSELIB

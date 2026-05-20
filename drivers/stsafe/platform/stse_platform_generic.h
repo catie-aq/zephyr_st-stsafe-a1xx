@@ -8,6 +8,8 @@
 
 #include <zephyr/kernel.h>
 
+#define STSE_CONF_STSAFE_A_SUPPORT
+
 #define PLAT_UI8           uint8_t
 #define PLAT_UI16          uint16_t
 #define PLAT_UI32          uint32_t

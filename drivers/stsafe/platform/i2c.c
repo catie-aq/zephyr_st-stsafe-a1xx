@@ -27,6 +27,7 @@ struct stsafe_config {
 
 struct stsafe_i2c_ctx {
 	const struct device *i2c_bus;
+	uint16_t i2c_addr;
 	uint8_t buffer[STSAFE_I2C_BUFFER_SIZE];
 	uint16_t frame_size;
 	uint16_t frame_offset;
@@ -54,6 +55,7 @@ stse_ReturnCode_t stse_platform_i2c_init(PLAT_UI8 busID, void *pArg)
 	const struct stsafe_config *cfg = stsafe_dev->config;
 
 	ctx_table[busID].i2c_bus = cfg->i2c.bus;
+	ctx_table[busID].i2c_addr = cfg->i2c.addr;
 	ctx_table[busID].used = true;
 	ctx_table[busID].bus_id = cfg->bus_id;
 	return STSE_OK;
@@ -98,9 +100,9 @@ stse_ReturnCode_t stse_platform_i2c_send_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, 
 	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
 
 	stse_ReturnCode_t ret =
-		stse_platform_i2c_send_continue(busID, devAddr, speed, pData, data_size);
+		stse_platform_i2c_send_continue(busID, ctx->i2c_addr, speed, pData, data_size);
 	if (ret == STSE_OK) {
-		ret = i2c_write(ctx->i2c_bus, ctx->buffer, ctx->frame_size, devAddr);
+		ret = i2c_write(ctx->i2c_bus, ctx->buffer, ctx->frame_size, ctx->i2c_addr);
 	}
 	if (ret != STSE_OK) {
 		return STSE_PLATFORM_BUS_ACK_ERROR;
@@ -115,7 +117,7 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAd
 	uint8_t stat_len[3];
 	uint8_t ret;
 
-	ret = i2c_read(ctx->i2c_bus, stat_len, sizeof(stat_len), devAddr);
+	ret = i2c_read(ctx->i2c_bus, stat_len, sizeof(stat_len), ctx->i2c_addr);
 	if (ret != STSE_OK) {
 		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
@@ -127,7 +129,7 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAd
 		return STSE_PLATFORM_BUFFER_ERR;
 	}
 
-	ret = i2c_read(ctx->i2c_bus, ctx->buffer, frameLength, devAddr);
+	ret = i2c_read(ctx->i2c_bus, ctx->buffer, frameLength, ctx->i2c_addr);
 	if (ret != STSE_OK) {
 		return STSE_PLATFORM_BUS_ERR;
 	}

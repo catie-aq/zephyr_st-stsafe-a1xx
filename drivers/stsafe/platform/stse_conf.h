@@ -35,9 +35,4 @@
 #endif
 #endif
 
-#define STSE_USE_RSP_POLLING
-#define STSE_MAX_POLLING_RETRY      10
-#define STSE_FIRST_POLLING_INTERVAL 33
-#define STSE_POLLING_RETRY_INTERVAL 100
-
 #endif /* STSE_CONF_H */

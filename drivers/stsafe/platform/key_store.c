@@ -5,10 +5,10 @@
 
 #include "stselib.h"
 #include <psa/crypto.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/psa/key_ids.h>
 
-LOG_MODULE_REGISTER(stse_key_store, LOG_LEVEL_INF);
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(stsafe, CONFIG_STSAFE_LOG_LEVEL);
 
 #include "stse_aes.h"
 
@@ -18,6 +18,7 @@ static void secure_zero(void *ptr, size_t len)
 	while (len--) {
 		*p++ = 0;
 	}
+	LOG_DBG("securely zeroed %zu bytes at %p", len, ptr);
 }
 
 static int store_persistent_key(psa_key_id_t id, psa_key_type_t type, size_t bits,
@@ -29,7 +30,10 @@ static int store_persistent_key(psa_key_id_t id, psa_key_type_t type, size_t bit
 
 	ret = psa_get_key_attributes(id, &attr);
 	if (ret == PSA_SUCCESS) {
-		LOG_INF("Key ID %u (0x%x) already exists", id, id);
+		LOG_DBG("Existing key attributes: type=0x%08x, bits=%zu, "
+			"alg=0x%08x, usage=0x%08x",
+			psa_get_key_type(&attr), psa_get_key_bits(&attr),
+			psa_get_key_algorithm(&attr), psa_get_key_usage_flags(&attr));
 		psa_reset_key_attributes(&attr);
 		return 0;
 	}
@@ -44,7 +48,7 @@ static int store_persistent_key(psa_key_id_t id, psa_key_type_t type, size_t bit
 	psa_key_id_t imported_id;
 	ret = psa_import_key(&attr, key_data, key_data_len, &imported_id);
 	if (ret != PSA_SUCCESS) {
-		LOG_ERR("Failed to import key %u (0x%x): %d", id, id, ret);
+		LOG_ERR("Failed to import key: %d", ret);
 		return -1;
 	}
 
@@ -56,9 +60,11 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 					      stse_aes_key_usage_t usage, PLAT_UI32 *pKey_idx)
 {
 	if (!pKey || !pKey_idx) {
+		LOG_ERR("Invalid parameter: key or key index pointer is NULL");
 		return STSE_CORE_INVALID_PARAMETER;
 	}
 	if (!((key_length == 16) || (key_length == 32))) {
+		LOG_ERR("Invalid key length: %u (must be 16 or 32)", key_length);
 		return STSE_CORE_INVALID_PARAMETER;
 	}
 
@@ -70,6 +76,7 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 			PSA_KEY_USAGE_SIGN_MESSAGE | PSA_KEY_USAGE_VERIFY_MESSAGE, pKey,
 			key_length);
 		if (ret != 0) {
+			LOG_ERR("Failed to store MAC key: %d", ret);
 			return STSE_SESSION_ERROR;
 		}
 		*pKey_idx = STSE_ITS_ID_KEY_CMAC;
@@ -79,6 +86,7 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 					   PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT, pKey,
 					   key_length);
 		if (ret != 0) {
+			LOG_ERR("Failed to store CBC key: %d", ret);
 			return STSE_SESSION_ERROR;
 		}
 
@@ -88,6 +96,7 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 					   key_length);
 		if (ret != 0) {
 			psa_destroy_key(STSE_ITS_ID_KEY_CBC);
+			LOG_ERR("Failed to store ECB key: %d", ret);
 			return STSE_SESSION_ERROR;
 		}
 		*pKey_idx = STSE_ITS_ID_KEY_CIPHER;
@@ -101,6 +110,9 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 stse_ReturnCode_t stse_platform_delete_key(PLAT_UI32 CypherKeyIdx, PLAT_UI32 MACKeyIdx)
 {
 	if (CypherKeyIdx != STSE_ITS_ID_KEY_CBC || MACKeyIdx != STSE_ITS_ID_KEY_CMAC) {
+		LOG_DBG("Invalid key indices: CypherKeyIdx=%u (expected %u), "
+			"MACKeyIdx=%u (expected %u)",
+			CypherKeyIdx, STSE_ITS_ID_KEY_CBC, MACKeyIdx, STSE_ITS_ID_KEY_CMAC);
 		return STSE_OK;
 	}
 
@@ -108,5 +120,7 @@ stse_ReturnCode_t stse_platform_delete_key(PLAT_UI32 CypherKeyIdx, PLAT_UI32 MAC
 	psa_destroy_key(STSE_ITS_ID_KEY_CBC);
 	psa_destroy_key(STSE_ITS_ID_KEY_ECB);
 
+	LOG_DBG("Successfully deleted keys with indices: CypherKeyIdx=%u, MACKeyIdx=%u",
+		CypherKeyIdx, MACKeyIdx);
 	return STSE_OK;
 }

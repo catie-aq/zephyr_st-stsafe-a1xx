@@ -32,7 +32,11 @@ config STSAFE_MAX_INSTANCES
 
 module = STSAFE
 module-str = stsafe
+module-help = Logging for the STSAFE-A1xx native driver and its platform layer.
 source "subsys/logging/Kconfig.template.log_config"
+choice STSAFE_LOG_LEVEL_CHOICE
+    default STSAFE_LOG_LEVEL_WRN
+endchoice
 
 endif # STSAFE_DRIVER
 

@@ -46,7 +46,7 @@ static void echo_thread(void *p1, void *p2, void *p3)
 
 	for (int i = 0; i < ITERATIONS; i++) {
 		stse_Handle_t *stse_handle = stsafe_acquire(se, ACQUIRE_TIMEOUT);
-		if (stse_handle) {
+		if (!stse_handle) {
 			LOG_ERR("[%s] acquire timed out on iter %d", w->name, i);
 			w->errors++;
 			continue;

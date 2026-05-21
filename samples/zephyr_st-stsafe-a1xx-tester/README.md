@@ -1,60 +1,45 @@
-# Zest Security Secure Element (STSafe-A1xx) Tester
+# STSAFE-A1xx Tester Sample
 
-This repository serves two purposes:
-1. Testing your components: it verifies that everything works and displays the configured access commands as well as any pre-configured keys.
-2. Minimal configuration reference: it shows the bare-bones setup required to use the Zest_Security_SecureElement.
+Minimal smoke-test for the [`st-stsafe-a1xx`](../../) Zephyr driver. Uses the single-threaded `stsafe_get_handle()` API.
 
-## Building and Flashing
-To build and flash the application, use the following commands:
+## Overview
+
+This sample:
+1. Validates hardware (I²C, reset GPIO, boot sequence).
+2. Sends an 8-byte echo (`stse_device_echo`).
+3. Prints chip personalization info (access conditions, encryption flags).
+4. Queries the host key slot state (A110/A120).
+
+## Build and Flash
+
+Targeting the nRF5340 app core with the `zest_security_secureelement` shield (port 1):
+
 ```bash
-west build -b zest_core_nrf5340/nrf5340/cpuapp --shield zest_security_secureelement -- -D DTC_OVERLAY_FILE=sixtron_bus.overlay
-
+west build -b zest_core_nrf5340/nrf5340/cpuapp/ns \
+           --shield zest_security_secureelement \
+           samples/zephyr_st-stsafe-a1xx-tester \
+           -- -D DTC_OVERLAY_FILE=sixtron_bus.overlay
 west flash
 ```
 
-Sample output:
+> Note: For custom wiring, provide your own overlay defining the stsafe_1_20 node.
 
-### Using STSafe-A120 chip type
-```
-*** Booting Zephyr OS build v4.1.0 ***
-************************************************************
+## Output Guide
+- AC (Access Condition): FREE, HOST, ADMIN, or NEVER.
+- CMD_enc / RSP_enc: Payload encryption required (Y/N).
+- Presence Flag: 1 if a host key is provisioned. If 0, HOST commands will fail.
+- C-MAC Counter: Host-session protocol counter.
 
-      Zest Security Secure Element (STSafe-A1xx) Tester
+## Troubleshooting
 
-************************************************************
+| Symptom                           | Cause / Fix                                                    |
+|-----------------------------------|----------------------------------------------------------------|
+| `STSAFE device not ready`         | Missing `stsafe_1_20` DT node. Check shield/overlay.           |
+| `Could not acquire STSAFE handle` | I²C/GPIO error. Enable CONFIG_STSAFE_LOG_LEVEL_DBG=y to trace. |
+| `stse_device_echo failed`         | The echo command is locked (not FREE) on this specific chip.   |
+| Wrong host-key branch             | DT compatible mismatch (`st,stsafe-a110` vs`st,stsafe-a120`).  |
 
-Using STSafe-A120 chip type.
-
-STSafe handler initialized successfully.
-
-=== 45 commands configured (not specified commands are FREE) ===
-        Cmd 08: AC=NEVER, CMD_enc=N, RSP_enc=N
-
-Host Key Slot V2:
-        Presence Flag: 0
-        Key Type: 0
-        C-MAC Counter: 0x00000000
-```
-
-### Using STSafe-A110 chip type
-
-```
-*** Booting Zephyr OS build v4.1.0 ***
-************************************************************
-
-      Zest Security Secure Element (STSafe-A1xx) Tester
-
-************************************************************
-
-Using STSafe-A110 chip type.
-
-STSafe handler initialized successfully.
-
-=== 9 commands configured (not specified commands are FREE) ===
-        Cmd 0E: AC=HOST, CMD_enc=Y, RSP_enc=N
-        Cmd 0F: AC=HOST, CMD_enc=N, RSP_enc=Y
-
-Host Key Slot:
-        Presence Flag: 1
-        C-MAC Counter: 0x000041
-```
+## See Also
+- [STSAFE-A1xx Zephyr Driver](../../)
+- [Multi-threaded example](../zephyr_st-stsafe-a1xx-example)
+- [STSELib](https://github.com/STMicroelectronics/STSELib)

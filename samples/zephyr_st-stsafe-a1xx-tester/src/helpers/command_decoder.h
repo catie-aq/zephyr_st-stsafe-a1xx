@@ -8,7 +8,7 @@
 
 #include <zephyr/kernel.h>
 
-#include "stselib.h"
+#include <drivers/stsafe.h>
 
 void print_perso_info(stse_Handle_t *stse_handler);
 

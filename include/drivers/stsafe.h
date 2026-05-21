@@ -8,6 +8,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+#include <stse_platform_generic.h>
 #include "stselib.h"
 
 stse_Handle_t *stsafe_get_handle(const struct device *dev);

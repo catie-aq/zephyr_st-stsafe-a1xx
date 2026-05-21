@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, CATIE
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #define DT_DRV_COMPAT st_stsafe_a120
 
 #include <zephyr/device.h>
@@ -35,7 +40,7 @@ static int stsafe_reset(const struct device *dev)
 	const struct stsafe_config *cfg = dev->config;
 	int ret = gpio_pin_configure_dt(&cfg->reset_gpio, GPIO_OUTPUT_INACTIVE);
 	if (ret != 0) {
-		LOG_ERR("Reset GPIO config failed: %d", ret);
+		LOG_ERR("%s: reset GPIO config failed: %d", dev->name, ret);
 		return ret;
 	}
 
@@ -44,7 +49,7 @@ static int stsafe_reset(const struct device *dev)
 	gpio_pin_set_dt(&cfg->reset_gpio, 0);
 	k_msleep(10);
 
-	LOG_DBG("STSAFE reset complete");
+	LOG_DBG("%s: reset complete", dev->name);
 	return 0;
 }
 
@@ -66,11 +71,12 @@ stse_Handle_t *stsafe_get_handle(const struct device *dev)
 	struct stsafe_data *data = dev->data;
 
 	if (!data->ready) {
+		LOG_ERR("%s: get_handle called on uninitialized device", dev->name);
 		return NULL;
 	}
 	if (!stsafe_claim_mode(data, STSAFE_MODE_SIMPLE)) {
-		LOG_ERR("%s: stsafe_get_handle() called on a device already used "
-			"with stsafe_acquire()/release(). Stick to one mode.",
+		LOG_ERR("%s: get_handle called on device already in locked mode "
+			"(use acquire/release instead)",
 			dev->name);
 		return NULL;
 	}
@@ -81,19 +87,22 @@ stse_Handle_t *stsafe_acquire(const struct device *dev, k_timeout_t timeout)
 {
 	struct stsafe_data *data = dev->data;
 	if (!data->ready) {
+		LOG_ERR("%s: acquire called on uninitialized device", dev->name);
 		return NULL;
 	}
 
 	if (!stsafe_claim_mode(data, STSAFE_MODE_LOCKED)) {
-		LOG_ERR("%s: stsafe_acquire() called on a device already used "
-			"with stsafe_get_handle(). Stick to one mode.",
+		LOG_ERR("%s: acquire called on device already in simple mode "
+			"(use get_handle instead)",
 			dev->name);
 		return NULL;
 	}
 
 	if (k_mutex_lock(&data->lock, timeout) != 0) {
+		LOG_ERR("%s: acquire timed out", dev->name);
 		return NULL;
 	}
+	LOG_DBG("%s: acquired", dev->name);
 	return &data->handle;
 }
 
@@ -101,6 +110,7 @@ void stsafe_release(const struct device *dev)
 {
 	struct stsafe_data *data = dev->data;
 	k_mutex_unlock(&data->lock);
+	LOG_DBG("%s: released", dev->name);
 }
 
 static int stsafe_init(const struct device *dev)
@@ -109,11 +119,12 @@ static int stsafe_init(const struct device *dev)
 	struct stsafe_data *data = dev->data;
 
 	if (!device_is_ready(cfg->i2c.bus)) {
-		LOG_ERR("I2C bus not ready");
+		LOG_ERR("%s: I2C bus '%s' not ready", dev->name, cfg->i2c.bus->name);
 		return -ENODEV;
 	}
 	if (!gpio_is_ready_dt(&cfg->reset_gpio)) {
-		LOG_ERR("Reset GPIO not ready");
+		LOG_ERR("%s: reset GPIO port '%s' not ready", dev->name,
+			cfg->reset_gpio.port->name);
 		return -ENODEV;
 	}
 
@@ -123,7 +134,7 @@ static int stsafe_init(const struct device *dev)
 
 	stse_ReturnCode_t rc = stse_set_default_handler_value(&data->handle);
 	if (rc != STSE_OK) {
-		LOG_ERR("stse_set_default_handler_value failed: 0x%x", rc);
+		LOG_ERR("%s: stse_set_default_handler_value failed: 0x%x", dev->name, rc);
 		return -EIO;
 	}
 
@@ -132,13 +143,13 @@ static int stsafe_init(const struct device *dev)
 
 	rc = stse_init(&data->handle, (void *)dev);
 	if (rc != STSE_OK) {
-		LOG_ERR("stse_init failed: 0x%x", rc);
+		LOG_ERR("%s: stse_init failed: 0x%x", dev->name, rc);
 		return -EIO;
 	}
 
 	data->ready = true;
-	LOG_INF("STSAFE @0x%02x initialized. Type: %s", cfg->i2c.addr,
-		cfg->device_type == STSAFE_A110 ? "A110" : "A120");
+	LOG_INF("%s: ready (A1%s @ 0x%02x, bus_id=%d)", dev->name,
+		cfg->device_type == STSAFE_A110 ? "10" : "20", cfg->i2c.addr, cfg->bus_id);
 	return 0;
 }
 

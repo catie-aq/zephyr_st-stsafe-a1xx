@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(stsafe, CONFIG_STSAFE_LOG_LEVEL);
+
 #include "stselib.h"
 
 #define CRC16_INITIAL_VALUE 0xFFFF
@@ -37,6 +40,7 @@ PLAT_UI16 crc16_val = CRC16_INITIAL_VALUE;
 stse_ReturnCode_t stse_platform_crc16_init(void *pArg)
 {
 	(void)pArg; // Unused parameter
+	LOG_DBG("CRC16 init with value 0x%04X", CRC16_INITIAL_VALUE);
 	return STSE_OK;
 }
 
@@ -48,6 +52,7 @@ PLAT_UI16 crc16_calculate(uint8_t *data, PLAT_UI16 length)
 		crc16_val = (crc16_val >> 8) ^ crc16_tab[(crc16_val ^ data[i]) & 0x00FF];
 	}
 
+	LOG_DBG("CRC16 calculated for %u bytes: 0x%04X", length, ~crc16_val);
 	return ~crc16_val;
 }
 
@@ -57,6 +62,7 @@ PLAT_UI16 crc16_update(uint8_t *data, PLAT_UI16 length)
 		crc16_val = (crc16_val >> 8) ^ crc16_tab[(crc16_val ^ data[i]) & 0x00FF];
 	}
 
+	LOG_DBG("CRC16 updated with %u bytes, current value: 0x%04X", length, ~crc16_val);
 	return ~crc16_val;
 }
 

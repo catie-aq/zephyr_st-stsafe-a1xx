@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(stsafe, CONFIG_STSAFE_LOG_LEVEL);
+
 #include "stselib.h"
 
 #ifdef CONFIG_STSE_USE_HOST_SESSION
@@ -17,10 +20,12 @@ stse_ReturnCode_t stse_platform_crypto_init(void *pArg)
 	if (!inited) {
 		psa_status_t st = psa_crypto_init();
 		if (st != PSA_SUCCESS) {
+			LOG_ERR("Failed to initialize PSA crypto");
 			return st;
 		}
 		inited = true;
 	}
+	LOG_DBG("PSA crypto initialized successfully");
 	return PSA_SUCCESS;
 #else
 	return STSE_OK;

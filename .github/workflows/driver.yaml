@@ -13,7 +13,7 @@ jobs:
     with:
       path: "samples"
       boards: "zest_core_nrf5340"
-      zephyr_modules: "hal_nordic,trusted-firmware-m,mbedtls,mcuboot"
+      zephyr_modules: "hal_nordic,trusted-firmware-m,mbedtls,mcuboot,tf-psa-crypto"
       has_manifest: true
 
     secrets:

@@ -37,7 +37,7 @@ if(CONFIG_LIB_STSELIB)
     platform/key_store.c
   )
 
-  zephyr_compile_options(
+  zephyr_library_compile_options(
     -include ${CMAKE_CURRENT_SOURCE_DIR}/platform/stse_platform_generic.h
   )
 

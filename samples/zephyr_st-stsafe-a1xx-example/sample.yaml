@@ -7,5 +7,5 @@ tests:
       - zest_core_nrf5340/nrf5340/cpuapp/ns
     extra_args:
       # - SHIELD=zest_security_secureelement
-      - DTC_OVERLAY_FILE="sixtron_bus.overlay;boards/zest_core_nrf5340_nrf5340_cpuapp_ns.overlay"
+      - DTC_OVERLAY_FILE="sixtron_bus.overlay"
     depends_on: i2c

@@ -130,45 +130,37 @@ stse_ReturnCode_t stse_platform_i2c_send_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, 
 stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_UI16 speed,
 						  PLAT_UI16 frameLength)
 {
+	(void)devAddr;
+	(void)speed;
 	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
-	uint8_t stat_len[3];
-	uint8_t ret;
 
-	ret = i2c_read(ctx->i2c_bus, stat_len, sizeof(stat_len), ctx->i2c_addr);
-	if (ret != STSE_OK) {
-		LOG_ERR("i2c_read (header) failed on bus_id=%u addr=0x%02x: %d", busID,
-			ctx->i2c_addr, ret);
-		return STSE_PLATFORM_BUS_ACK_ERROR;
-	}
-	ctx->frame_size = ((stat_len[1] << 8) + stat_len[2]) + STSE_RSP_FRAME_HEADER_SIZE +
-			  STSE_FRAME_CRC_SIZE;
-	frameLength = ctx->frame_size;
-
-	if (ctx->frame_size > STSAFE_I2C_BUFFER_SIZE) {
-		LOG_ERR("frame size %u exceeds buffer size %u", ctx->frame_size,
-			STSAFE_I2C_BUFFER_SIZE);
+	if (frameLength > STSAFE_I2C_BUFFER_SIZE) {
 		return STSE_PLATFORM_BUFFER_ERR;
 	}
 
-	ret = i2c_read(ctx->i2c_bus, ctx->buffer, frameLength, ctx->i2c_addr);
-	if (ret != STSE_OK) {
-		LOG_ERR("i2c_read (data) failed on bus_id=%u addr=0x%02x: %d", busID, ctx->i2c_addr,
-			ret);
-		return STSE_PLATFORM_BUS_ERR;
+	ctx->frame_size = frameLength;
+
+	int ret = i2c_read(ctx->i2c_bus, ctx->buffer, ctx->frame_size, ctx->i2c_addr);
+	if (ret != 0) {
+		LOG_ERR("i2c_read failed on bus_id=%u addr=0x%02x: %d", busID, ctx->i2c_addr, ret);
+		return STSE_PLATFORM_BUS_ACK_ERROR;
 	}
+
 	ctx->frame_offset = 0;
-	return (stat_len[0] & 0x3F);
+	return STSE_OK;
 }
 
 stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 devAddr,
 						     PLAT_UI16 speed, PLAT_UI8 *pData,
 						     PLAT_UI16 data_size)
 {
+	(void)devAddr;
+	(void)speed;
 	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
 
 	if (pData != NULL) {
-		if (ctx->frame_offset == 1) {
-			ctx->frame_offset += 2;
+		if ((ctx->frame_size - ctx->frame_offset) < data_size) {
+			return STSE_PLATFORM_BUFFER_ERR;
 		}
 		memcpy(pData, ctx->buffer + ctx->frame_offset, data_size);
 	}

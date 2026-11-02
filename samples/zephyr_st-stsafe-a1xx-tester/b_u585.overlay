@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 CATIE
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#include <zephyr/dt-bindings/gpio/sixtron-header.h>
+
+&i2c2 {
+    status = "okay";
+    stsafe_1_20: stsafe-a120@20 {
+        compatible = "st,stsafe-a120";
+        reg = <0x20>;
+        reset-gpios = <&gpiof 11 GPIO_ACTIVE_HIGH>;
+        status = "okay";
+    };
+};

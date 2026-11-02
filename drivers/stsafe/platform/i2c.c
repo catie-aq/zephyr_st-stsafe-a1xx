@@ -150,10 +150,25 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(PLAT_UI8 busID, PLAT_UI8 devAd
 	return STSE_OK;
 }
 
+static stse_ReturnCode_t frame_pull(struct stsafe_i2c_ctx *ctx, PLAT_UI8 *pData, PLAT_UI16 n)
+{
+	if ((PLAT_UI32)ctx->frame_offset + n > ctx->frame_size) {
+		LOG_ERR("read past end of frame: off=%u n=%u size=%u", ctx->frame_offset, n,
+			ctx->frame_size);
+		return STSE_PLATFORM_BUFFER_ERR;
+	}
+	if (pData != NULL) {
+		memcpy(pData, ctx->buffer + ctx->frame_offset, n);
+	}
+	ctx->frame_offset += n;
+	return STSE_OK;
+}
+
 stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 devAddr,
 						     PLAT_UI16 speed, PLAT_UI8 *pData,
 						     PLAT_UI16 data_size)
 {
+<<<<<<< HEAD
 	(void)devAddr;
 	(void)speed;
 	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
@@ -166,19 +181,17 @@ stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 de
 	}
 	ctx->frame_offset += data_size;
 	return STSE_OK;
+=======
+	return frame_pull(&ctx_table[busID], pData, data_size);
+>>>>>>> d674aa6 (fix i2c communication)
 }
 
 stse_ReturnCode_t stse_platform_i2c_receive_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_UI16 speed,
 						 PLAT_UI8 *pData, PLAT_UI16 data_size)
 {
 	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
+	stse_ReturnCode_t ret = frame_pull(ctx, pData, data_size);
 
-	if (pData != NULL) {
-		memcpy(pData, ctx->buffer + ctx->frame_offset, data_size);
-	}
 	ctx->frame_offset = 0;
-
-	LOG_DBG("frame received successfully on bus_id=%u addr=0x%02x, length=%u", busID,
-		ctx->i2c_addr, ctx->frame_size);
-	return STSE_OK;
+	return ret;
 }

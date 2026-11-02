@@ -168,22 +168,7 @@ stse_ReturnCode_t stse_platform_i2c_receive_continue(PLAT_UI8 busID, PLAT_UI8 de
 						     PLAT_UI16 speed, PLAT_UI8 *pData,
 						     PLAT_UI16 data_size)
 {
-<<<<<<< HEAD
-	(void)devAddr;
-	(void)speed;
-	struct stsafe_i2c_ctx *ctx = &ctx_table[busID];
-
-	if (pData != NULL) {
-		if ((ctx->frame_size - ctx->frame_offset) < data_size) {
-			return STSE_PLATFORM_BUFFER_ERR;
-		}
-		memcpy(pData, ctx->buffer + ctx->frame_offset, data_size);
-	}
-	ctx->frame_offset += data_size;
-	return STSE_OK;
-=======
 	return frame_pull(&ctx_table[busID], pData, data_size);
->>>>>>> d674aa6 (fix i2c communication)
 }
 
 stse_ReturnCode_t stse_platform_i2c_receive_stop(PLAT_UI8 busID, PLAT_UI8 devAddr, PLAT_UI16 speed,

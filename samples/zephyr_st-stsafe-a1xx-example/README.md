@@ -8,7 +8,7 @@ Two threads run echo round-trips against the same STSAFE device in parallel:
 - Thread A sends a payload of `0xAA` bytes.
 - Thread B sends a payload of `0xBB` bytes.
 
-Each thread acquires the device, runs `stse_device_echo`, releases it, then sleeps. The per-instance mutex inside the driver serialises the I²C traffic, and the payload check (sent vs received) confirms that neither thread sees the other's reply.
+Each thread acquires the device, runs `stsafea_echo`, releases it, then sleeps. The per-instance mutex inside the driver serialises the I²C traffic, and the payload check (sent vs received) confirms that neither thread sees the other's reply.
 
 ## Build and Flash
 

@@ -35,10 +35,10 @@ int main(void)
 
 	uint8_t echo[8] = {'t', 'e', 's', 't', 't', 'e', 's', 't'};
 	uint8_t echo_reply[sizeof(echo)] = {0};
-	ret = stse_device_echo(stse_handle, echo, echo_reply, sizeof(echo_reply));
+	ret = stsafea_echo(stse_handle, echo, echo_reply, sizeof(echo_reply));
 
 	if (ret != STSE_OK) {
-		LOG_ERR("stse_device_echo failed: 0x%x. Function is probably locked", ret);
+		LOG_ERR("stsafea_echo failed: 0x%x. Function is probably locked", ret);
 	}
 
 	LOG_HEXDUMP_INF(echo_reply, sizeof(echo_reply), "Echo reply from STSAFE:");

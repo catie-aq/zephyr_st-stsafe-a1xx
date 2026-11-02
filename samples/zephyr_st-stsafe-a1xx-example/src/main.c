@@ -53,7 +53,7 @@ static void echo_thread(void *p1, void *p2, void *p3)
 		}
 
 		memset(rx, 0, sizeof(rx));
-		int ret = stse_device_echo(stse_handle, tx, rx, sizeof(rx));
+		int ret = stsafea_echo(stse_handle, tx, rx, sizeof(rx));
 
 		stsafe_release(se);
 

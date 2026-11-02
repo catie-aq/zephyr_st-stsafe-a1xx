@@ -12,7 +12,7 @@ LOG_MODULE_REGISTER(command_decoder);
 void print_perso_info(stse_Handle_t *stse_handler)
 {
 	uint8_t cmd_count = 0;
-	int ret = stsafea_get_command_count(stse_handler, &cmd_count);
+	int ret = stsafea_get_command_authorization_records_count(stse_handler, &cmd_count);
 	if (ret != STSE_OK) {
 		LOG_ERR("Failed to get command count: %d", ret);
 		return;

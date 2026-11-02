@@ -5,11 +5,14 @@ manifest:
   remotes:
     - name: STMicroelectronics
       url-base: https://github.com/STMicroelectronics
+    - name: Catie
+      url-base: https://github.com/catie-aq
   defaults:
-    remote: STMicroelectronics
+    remote: Catie
 
   projects:
     - name: stselib
-      repo-path: STSELib
-      revision: dev/1.2.0
+      repo-path: STSELib-fork
+      # repo-path: STSELib
+      revision: 836b54b2c016f7250bd2885a722af04e44f6864a
       path: modules/lib/stselib

@@ -4,6 +4,17 @@
  */
 
 #include "stselib.h"
+#include <stdarg.h>
+#include <zephyr/sys/printk.h>
+
+void stse_platform_printf(const char *format, ...)
+{
+	va_list args;
+
+	va_start(args, format);
+	vprintk(format, args);
+	va_end(args);
+}
 
 stse_ReturnCode_t stse_services_platform_init(void)
 {

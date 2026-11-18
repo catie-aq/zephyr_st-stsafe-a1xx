@@ -107,20 +107,41 @@ stse_ReturnCode_t stse_platform_store_aes_key(PLAT_UI8 *pKey, PLAT_UI16 key_leng
 	return STSE_OK;
 }
 
-stse_ReturnCode_t stse_platform_delete_key(PLAT_UI32 CypherKeyIdx, PLAT_UI32 MACKeyIdx)
+static int delete_persistent_key(psa_key_id_t id)
 {
-	if (CypherKeyIdx != STSE_ITS_ID_KEY_CBC || MACKeyIdx != STSE_ITS_ID_KEY_CMAC) {
-		LOG_DBG("Invalid key indices: CypherKeyIdx=%u (expected %u), "
-			"MACKeyIdx=%u (expected %u)",
-			CypherKeyIdx, STSE_ITS_ID_KEY_CBC, MACKeyIdx, STSE_ITS_ID_KEY_CMAC);
-		return STSE_OK;
+	psa_status_t ret = psa_destroy_key(id);
+
+	if (ret == PSA_ERROR_INVALID_HANDLE || ret == PSA_ERROR_DOES_NOT_EXIST) {
+		LOG_DBG("Key %u (0x%x) already absent", id, id);
+		return 0;
 	}
 
-	psa_destroy_key(STSE_ITS_ID_KEY_CMAC);
-	psa_destroy_key(STSE_ITS_ID_KEY_CBC);
-	psa_destroy_key(STSE_ITS_ID_KEY_ECB);
+	if (ret != PSA_SUCCESS) {
+		LOG_ERR("Failed to delete key %u (0x%x): %d", id, id, ret);
+		return -1;
+	}
 
-	LOG_DBG("Successfully deleted keys with indices: CypherKeyIdx=%u, MACKeyIdx=%u",
-		CypherKeyIdx, MACKeyIdx);
+	LOG_DBG("Successfully deleted key %u (0x%x)", id, id);
+	return 0;
+}
+
+stse_ReturnCode_t stse_platform_delete_aes_key(PLAT_UI32 key_idx)
+{
+	if (key_idx == STSE_ITS_ID_KEY_CMAC) {
+		if (delete_persistent_key(STSE_ITS_ID_KEY_CMAC) != 0) {
+			return STSE_SESSION_ERROR;
+		}
+	} else if (key_idx == STSE_ITS_ID_KEY_CIPHER) {
+		int cbc_ret = delete_persistent_key(STSE_ITS_ID_KEY_CBC);
+		int ecb_ret = delete_persistent_key(STSE_ITS_ID_KEY_ECB);
+
+		if (cbc_ret != 0 || ecb_ret != 0) {
+			return STSE_SESSION_ERROR;
+		}
+	} else {
+		LOG_ERR("Invalid AES key index: %u", key_idx);
+		return STSE_CORE_INVALID_PARAMETER;
+	}
+
 	return STSE_OK;
 }
